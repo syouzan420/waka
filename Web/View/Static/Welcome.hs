@@ -22,7 +22,7 @@ instance View WelcomeView where
                                     border-radius: 3px; color: hsla(205, 69%, 98%, 1); text-decoration: none;
                                     font-weight: bold; display: inline-block;
                                     box-shadow: 0 4px 6px hsla(205, 69%, 0%, 0.08);
-                                    transition: box-shadow 0.2s; transition: transform 0.2s;" target="_blank">
+                                    transition: box-shadow 0.2s; transition: transform 0.2s;" target="_self">
                     ことのはくばり
             </a>
             </p>

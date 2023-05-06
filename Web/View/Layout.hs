@@ -20,7 +20,6 @@ defaultLayout inner = H.docTypeHtml ! A.lang "en" $ [hsx|
 </head>
 <body>
     <div class="container mt-4">
-        {showCurrentUser}
         {showlogin} <br> {showToOneUser} 
         <div style="text-align: right"><a href="../">HOME</a></div>
         {renderFlashMessages}
