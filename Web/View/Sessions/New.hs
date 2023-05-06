@@ -10,7 +10,6 @@ instance View (NewView User) where
                     <div style="max-width: 400px" class="mx-auto mb-5">
                         <h5>Please login</h5>
                         {renderForm user}
-                        {renderForm2 user}
                     </div>
                 </div>
             </div>

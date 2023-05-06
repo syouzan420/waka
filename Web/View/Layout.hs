@@ -35,7 +35,7 @@ defaultLayout inner = H.docTypeHtml ! A.lang "en" $ [hsx|
 
 userTeru = "f05a9b35-7df1-42d1-a1b5-dc420af273c2"
 
-userTeruOverThere = ""
+userTeruOverThere = "6a03be6b-32c7-41b8-975e-e19d40032069"
 
 showToOneUser :: Html
 showToOneUser = case currentUserOrNothing of
