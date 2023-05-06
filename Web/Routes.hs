@@ -10,4 +10,3 @@ instance AutoRoute StaticController
 instance AutoRoute PostsController
 instance AutoRoute SchedulesController
 instance AutoRoute CommentsController
-

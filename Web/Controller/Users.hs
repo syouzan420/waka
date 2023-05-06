@@ -4,6 +4,10 @@ import Web.Controller.Prelude
 import Web.View.Users.New
 
 instance Controller UsersController where
+  action UsersAction = do
+    let user = newRecord
+    render NewView { .. }
+
   action NewUserAction = do
     let user = newRecord
     render NewView { .. }

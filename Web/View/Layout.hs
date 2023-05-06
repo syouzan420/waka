@@ -21,7 +21,7 @@ defaultLayout inner = H.docTypeHtml ! A.lang "en" $ [hsx|
 <body>
     <div class="container mt-4">
         {showCurrentUser}
-        {showlogin} <br> {showToOneUser}
+        {showlogin} <br> {showToOneUser} 
         <div style="text-align: right"><a href="../">HOME</a></div>
         {renderFlashMessages}
         {inner}
@@ -33,7 +33,7 @@ defaultLayout inner = H.docTypeHtml ! A.lang "en" $ [hsx|
 -- This is useful to avoid users having old CSS and JS files in their browser cache once a new version is deployed
 -- See https://ihp.digitallyinduced.com/Guide/assets.html for more details
 
-userTeru = "2353fd25-d82e-4b9d-8dbf-a1709c97b111"
+userTeru = "f05a9b35-7df1-42d1-a1b5-dc420af273c2"
 
 userTeruOverThere = ""
 

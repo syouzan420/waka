@@ -10,6 +10,7 @@ instance View (NewView User) where
                     <div style="max-width: 400px" class="mx-auto mb-5">
                         <h5>Please login</h5>
                         {renderForm user}
+                        {renderForm2 user}
                     </div>
                 </div>
             </div>
@@ -31,3 +32,20 @@ renderForm user = [hsx|
         <button type="submit" class="btn btn-primary btn-block">Login</button>
     </form>
 |]
+
+renderForm2 :: User -> Html
+renderForm2 user = [hsx|
+    <form method="POST" action={CreateUserAction}>
+        <div class="form-group">
+            <input name="name" value={user.name} type="text" class="form-control" placeholder="Name" required="required" autofocus="autofocus" />
+        </div>
+        <div class="form-group">
+            <input name="email" value={user.email} type="email" class="form-control" placeholder="E-Mail" required="required" autofocus="autofocus" />
+        </div>
+        <div class="form-group">
+            <input name="passwordHash" type="password" class="form-control" placeholder="Password"/>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">SignUp</button>
+    </form>
+|]
+
