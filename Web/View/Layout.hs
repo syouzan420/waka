@@ -14,14 +14,15 @@ defaultLayout :: Html -> Html
 defaultLayout inner = H.docTypeHtml ! A.lang "en" $ [hsx|
 <head>
     {metaTags}
-
     {stylesheets}
     {scripts}
-
-    <title>{pageTitleOrDefault "App"}</title>
+    <title>{pageTitleOrDefault "あそべのもり"}</title>
 </head>
 <body>
     <div class="container mt-4">
+        {showCurrentUser}
+        {showlogin} <br> {showToOneUser}
+        <div style="text-align: right"><a href="../">HOME</a></div>
         {renderFlashMessages}
         {inner}
     </div>
@@ -31,6 +32,31 @@ defaultLayout inner = H.docTypeHtml ! A.lang "en" $ [hsx|
 -- The 'assetPath' function used below appends a `?v=SOME_VERSION` to the static assets in production
 -- This is useful to avoid users having old CSS and JS files in their browser cache once a new version is deployed
 -- See https://ihp.digitallyinduced.com/Guide/assets.html for more details
+
+userTeru = "2353fd25-d82e-4b9d-8dbf-a1709c97b111"
+
+userTeruOverThere = ""
+
+showToOneUser :: Html
+showToOneUser = case currentUserOrNothing of
+                  Just currentUser -> do
+                    let cid = show$currentUser.id
+                    if cid==userTeru then [hsx| <a>Hello Teru!</a> |]
+                                     else [hsx| <a>Hello User!</a> |]
+                  Nothing -> [hsx| <a>You are not User.</a> |]
+
+showCurrentUser :: Html
+showCurrentUser = case currentUserOrNothing of
+                    Just currentUser -> do
+                      let text = show$currentUser.id
+                      [hsx| <a>{text}</a> |]
+                    Nothing -> [hsx| <a>PLEASE LOGIN"</a> |]
+
+showlogin :: Html
+showlogin = case currentUserOrNothing of
+              Just _ -> [hsx| <a class="js-delete js-delete-no-confirm" href={DeleteSessionAction}>Logout</a> |]
+              Nothing -> [hsx| <a href={NewSessionAction}>Login</a>|]
+
 
 stylesheets :: Html
 stylesheets = [hsx|
