@@ -29,7 +29,11 @@ instance Controller SchedulesController where
   action NewScheduleAction { ymd } = do
       ensureIsUser
       let schedule = newRecord
+            |> set #filledDate ymd
+            |> set #userId currentUser.id
+            |> set #booked False
       schtypes <- query @Schtype |> fetch
+      durations <- query @Duration |> fetch
       setSuccessMessage ymd 
       render NewView { .. }
 
@@ -54,8 +58,11 @@ instance Controller SchedulesController where
 
   action CreateScheduleAction = do
     let schedule = newRecord @Schedule
-        ymd = filledDate schedule 
+            |> set #userId currentUser.id
+            |> set #booked False
+        ymd = filledDate schedule
     schtypes <- query @Schtype |> fetch
+    durations <- query @Duration |> fetch
     schedule
         |> buildSchedule
         |> ifValid \case
@@ -72,7 +79,7 @@ instance Controller SchedulesController where
       redirectTo SchedulesAction
 
 buildSchedule schedule = schedule
-    |> fill @["filledDate", "filledTime", "scheduleType", "description"]
+    |> fill @["filledDate","filledTime", "scheduleType", "description"]
     |> validateField #filledDate nonEmpty 
     |> validateField #filledTime nonEmpty 
     |> validateField #scheduleType nonEmpty

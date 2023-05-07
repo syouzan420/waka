@@ -6,6 +6,7 @@ import Web.Controller.Prelude
 import Web.View.Layout (defaultLayout)
 
 -- Controller Imports
+import Web.Controller.Durations
 import Web.Controller.Schtypes
 import Web.Controller.Comments
 import Web.Controller.Schedules
@@ -18,6 +19,7 @@ instance FrontController WebApplication where
         [ startPage WelcomeAction
         , parseRoute @SessionsController
         -- Generator Marker
+        , parseRoute @DurationsController
         , parseRoute @SchtypesController
         , parseRoute @CommentsController
         , parseRoute @SchedulesController

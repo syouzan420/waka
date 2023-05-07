@@ -29,11 +29,11 @@ data PostsController
     deriving (Eq, Show, Data)
 
 data SchedulesController
-    = SchedulesAction
+    = SchedulesAction 
     | OtherSchedulesAction { ymd :: !Text }
     | NewScheduleAction { ymd :: !Text }
     | ShowScheduleAction { scheduleId :: !(Id Schedule) }
-    | CreateScheduleAction
+    | CreateScheduleAction 
     | EditScheduleAction { scheduleId :: !(Id Schedule) }
     | UpdateScheduleAction { scheduleId :: !(Id Schedule) }
     | DeleteScheduleAction { scheduleId :: !(Id Schedule) }
@@ -72,3 +72,13 @@ data SchtypesController
     | DeleteSchtypeAction { schtypeId :: !(Id Schtype) }
     deriving (Eq, Show, Data)
 
+
+data DurationsController
+    = DurationsAction
+    | NewDurationAction
+    | ShowDurationAction { durationId :: !(Id Duration) }
+    | CreateDurationAction
+    | EditDurationAction { durationId :: !(Id Duration) }
+    | UpdateDurationAction { durationId :: !(Id Duration) }
+    | DeleteDurationAction { durationId :: !(Id Duration) }
+    deriving (Eq, Show, Data)

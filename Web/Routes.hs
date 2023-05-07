@@ -13,3 +13,6 @@ instance AutoRoute CommentsController
 
 instance AutoRoute SchtypesController
 
+
+instance AutoRoute DurationsController
+

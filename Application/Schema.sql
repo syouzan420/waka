@@ -16,15 +16,14 @@ CREATE TABLE users (
 );
 CREATE TABLE schedules (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
-    user_id UUID NOT NULL,
     filled_date TEXT NOT NULL,
     filled_time TEXT NOT NULL,
     schedule_type TEXT NOT NULL,
     description TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-    booked BOOLEAN DEFAULT false NOT NULL
+    booked BOOLEAN DEFAULT false NOT NULL,
+    user_id UUID NOT NULL
 );
-CREATE INDEX schedules_user_id_indescriptionx ON schedules (user_id);
 CREATE INDEX schedules_created_at_index ON schedules (created_at);
 CREATE TABLE comments (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
@@ -39,5 +38,10 @@ CREATE TABLE schtypes (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
     schedule_type TEXT NOT NULL
 );
+CREATE TABLE durations (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
+    time_duration TEXT NOT NULL
+);
+CREATE INDEX schedules_user_id_index ON schedules (user_id);
 ALTER TABLE comments ADD CONSTRAINT comments_ref_post_id FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE NO ACTION;
 ALTER TABLE schedules ADD CONSTRAINT schedules_ref_user_id FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE NO ACTION;
