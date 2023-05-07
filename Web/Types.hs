@@ -54,3 +54,13 @@ data CommentsController
     | DeleteCommentAction { commentId :: !(Id Comment) }
     deriving (Eq, Show, Data)
 
+data SchtypesController
+    = SchtypesAction
+    | NewSchtypeAction
+    | ShowSchtypeAction { schtypeId :: !(Id Schtype) }
+    | CreateSchtypeAction
+    | EditSchtypeAction { schtypeId :: !(Id Schtype) }
+    | UpdateSchtypeAction { schtypeId :: !(Id Schtype) }
+    | DeleteSchtypeAction { schtypeId :: !(Id Schtype) }
+    deriving (Eq, Show, Data)
+

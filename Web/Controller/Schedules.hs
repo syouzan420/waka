@@ -29,6 +29,7 @@ instance Controller SchedulesController where
   action NewScheduleAction { ymd } = do
       ensureIsUser
       let schedule = newRecord
+      schtypes <- query @Schtype |> fetch
       setSuccessMessage ymd 
       render NewView { .. }
 
@@ -54,6 +55,7 @@ instance Controller SchedulesController where
   action CreateScheduleAction = do
     let schedule = newRecord @Schedule
         ymd = filledDate schedule 
+    schtypes <- query @Schtype |> fetch
     schedule
         |> buildSchedule
         |> ifValid \case
