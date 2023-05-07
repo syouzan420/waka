@@ -1,13 +1,14 @@
 module Web.View.Schedules.New where
+
 import Web.View.Prelude
 
-data NewView = NewView { schedule :: Schedule }
+data NewView = NewView { schedule :: Schedule , ymd :: Text }
 
 instance View NewView where
     html NewView { .. } = [hsx|
         {breadcrumb}
         <h1>New Schedule</h1>
-        {renderForm schedule}
+        {renderForm schedule ymd}
     |]
         where
             breadcrumb = renderBreadcrumb
@@ -15,10 +16,9 @@ instance View NewView where
                 , breadcrumbText "New Schedule"
                 ]
 
-renderForm :: Schedule -> Html
-renderForm schedule = formFor schedule [hsx|
-    {(textField #userId)}
-    {(textField #filledDate)}
+renderForm :: Schedule -> Text -> Html
+renderForm schedule ymd = formFor schedule [hsx|
+    {(textField #filledDate) {fieldValue=ymd}}
     {(textField #filledTime)}
     {(textField #scheduleType)}
     {(textField #description)}

@@ -1,13 +1,16 @@
 module Web.View.Schedules.Index where
 import Web.View.Prelude
 
-data IndexView = IndexView { schedules :: [Schedule], ymd :: Text  }
+data IndexView = IndexView { schedules :: [Schedule], ymd :: Text }
 
 instance View IndexView where
   html IndexView { .. } = [hsx|
     {breadcrumb}
     <h1>よてい</h1>
-    {generateCalenderHtml newSchedulePath (yearNow ymd) (monthNow ymd)}
+    <a href={OtherSchedulesAction (subMonth ymd)}>←←</a>
+    {showYearMonth ymd}
+    <a href={OtherSchedulesAction (addMonth ymd)}>→→</a>
+    {generateCalenderHtml (newSchedulePath ymd) (yearNow ymd) (monthNow ymd)}
     <div class="table-responsive">
       <table class="table">
         <thead>
@@ -22,7 +25,7 @@ instance View IndexView where
     </div>
   |]
     where
-      newSchedulePath dy = pathTo (NewScheduleAction ("202305"++digitShow dy))
+      newSchedulePath ymd dy = pathTo (NewScheduleAction (yearMonth ymd++digitShow dy))
       breadcrumb = renderBreadcrumb
           [ breadcrumbLink "Schedules" SchedulesAction
           ]
@@ -38,6 +41,26 @@ monthNow ymd = let (_,m,_) = splitYearMonthDay ymd in m
 
 dayNow :: Text -> Int
 dayNow ymd = let (_,_,d) = splitYearMonthDay ymd in d
+
+addMonth :: Text -> Text
+addMonth ymd = let (y,m,d) = splitYearMonthDay ymd
+                   nm = if m==12 then 1 else m+1
+                   ny = if m==12 then y+1 else y
+                in show ny ++ digitShow (show nm) ++ digitShow (show d)
+
+subMonth :: Text -> Text
+subMonth ymd = let (y,m,d) = splitYearMonthDay ymd
+                   nm = if m==1 then 12 else m-1
+                   ny = if m==1 then y-1 else y
+                in show ny ++ digitShow (show nm) ++ digitShow (show d)
+
+yearMonth :: Text -> Text
+yearMonth ymd = let (y,m,_) = splitYearMonthDay ymd
+                 in show y ++ digitShow (show m)
+
+showYearMonth :: Text -> Html 
+showYearMonth ymd = let (y,m,_) = splitYearMonthDay ymd
+                     in [hsx| <a> {y} 年 {m} 月 </a> |]
 
 renderSchedule :: Schedule -> Html
 renderSchedule schedule = [hsx|

@@ -98,9 +98,8 @@ daysList :: Int -> Int -> [[Int]]
 daysList ye mo = filledWeekDaysList (weekDaysList (dayYobiList ye mo))
 
 generateCalenderHtml :: (T.Text -> T.Text) -> Int -> Int -> Html 
-generateCalenderHtml link ye mo = preEscapedToHtml (title<>"<table>"<>tbl<>"</table>\n")
+generateCalenderHtml link ye mo = preEscapedToHtml ("<table>"<>tbl<>"</table>\n")
   where dlst = daysList ye mo 
-        title = "<a>"<>show ye<>"年  "<>show mo<>"月</a><br>"
         hdr = foldl (\acc yb -> acc<>"<th>"<>yb<>"</th>") "" ["日","月","火","水","木","金","土"]
         mdl = foldl (\acc wk -> acc<>"<tr>"<>
                 foldl (\acc dy -> acc<>"<td>"<>"<a href="<>(link (show dy))<>">"

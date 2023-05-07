@@ -18,6 +18,13 @@ instance Controller SchedulesController where
       let ymd = T.concat (T.splitOn "-" (formatUTCTime currentTime))
       setSuccessMessage ymd 
       render IndexView { .. }
+
+  action OtherSchedulesAction { ymd } = do
+      schedules <- query @Schedule
+          |> orderByDesc #createdAt
+          |> fetch
+      setSuccessMessage ymd
+      render IndexView { .. }
   
   action NewScheduleAction { ymd } = do
       ensureIsUser
