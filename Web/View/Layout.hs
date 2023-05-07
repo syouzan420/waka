@@ -32,10 +32,6 @@ defaultLayout inner = H.docTypeHtml ! A.lang "en" $ [hsx|
 -- This is useful to avoid users having old CSS and JS files in their browser cache once a new version is deployed
 -- See https://ihp.digitallyinduced.com/Guide/assets.html for more details
 
-userTeru = "f05a9b35-7df1-42d1-a1b5-dc420af273c2"
-
-userTeruOverThere = "6a03be6b-32c7-41b8-975e-e19d40032069"
-
 showToOneUser :: Html
 showToOneUser = case currentUserOrNothing of
                   Just currentUser -> do
@@ -52,10 +48,10 @@ showCurrentUser = case currentUserOrNothing of
                     Nothing -> [hsx| <a>PLEASE LOGIN"</a> |]
 
 showlogin :: Html
-showlogin = case currentUserOrNothing of
-              Just _ -> [hsx| <a class="js-delete js-delete-no-confirm" href={DeleteSessionAction}>Logout</a> |]
-              Nothing -> [hsx| <a href={NewSessionAction}>Login</a>|]
-
+showlogin = 
+  case currentUserOrNothing of
+     Just _ -> [hsx| <a class="js-delete js-delete-no-confirm" href={DeleteSessionAction}>Logout</a> |]
+     Nothing -> [hsx| <a href={NewSessionAction}>Login</a>|]
 
 stylesheets :: Html
 stylesheets = [hsx|

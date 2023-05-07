@@ -10,7 +10,7 @@ instance View IndexView where
     <a href={OtherSchedulesAction (subMonth ymd)}>←←</a>
     {showYearMonth ymd}
     <a href={OtherSchedulesAction (addMonth ymd)}>→→</a>
-    {generateCalenderHtml (newSchedulePath ymd) (yearNow ymd) (monthNow ymd)}
+    {makeCalender ymd}
     <div class="table-responsive">
       <table class="table">
         <thead>
@@ -25,10 +25,21 @@ instance View IndexView where
     </div>
   |]
     where
-      newSchedulePath ymd dy = pathTo (NewScheduleAction (yearMonth ymd++digitShow dy))
       breadcrumb = renderBreadcrumb
           [ breadcrumbLink "Schedules" SchedulesAction
           ]
+
+makeCalender :: Text -> Html
+makeCalender ymd = 
+  case currentUserOrNothing of
+      Just currentUser -> do
+        let cid = show$currentUser.id
+        if cid==userTeru 
+          then generateCalenderHtml (newSchedulePath ymd) (yearNow ymd) (monthNow ymd) 
+          else generateCalenderHtml (newSchedulePath ymd) (yearNow ymd) (monthNow ymd) 
+      Nothing -> generateCalenderWithNoLink (yearNow ymd) (monthNow ymd) 
+    where
+      newSchedulePath ymd dy = pathTo (NewScheduleAction (yearMonth ymd++digitShow dy))
 
 digitShow :: Text -> Text
 digitShow dy = if dy `elem` ["1","2","3","4","5","6","7","8","9"] then "0"<>dy else dy
