@@ -36,8 +36,9 @@ showToOneUser :: Html
 showToOneUser = case currentUserOrNothing of
                   Just currentUser -> do
                     let cid = show$currentUser.id
-                    if cid==userTeru then [hsx| <a>Hello Teru!</a> |]
-                                     else [hsx| <a>Hello User!</a> |]
+                    if cid==userTeru || cid==userTeruOverThere
+                       then [hsx| <a>Hello Teru!</a> |]
+                       else [hsx| <a>Hello User!</a> |]
                   Nothing -> [hsx| <a>You are not User.</a> |]
 
 showCurrentUser :: Html
