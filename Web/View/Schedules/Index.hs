@@ -48,7 +48,7 @@ makeCalender ymd schedules =
           case currentUserOrNothing of
               Just currentUser -> do
                 let cid = show$currentUser.id
-                if cid == userTeru
+                if cid == userTeru || cid == userTeruOverThere
                   then if dy `elem` getFilledDates schedules
                     then " style=\"color:green\"; href="<>pathTo (NewScheduleAction (yearMonth ymd++digitShow dy))
                     else " style=\"color:blue\"; href="<>pathTo (NewScheduleAction (yearMonth ymd++digitShow dy))
