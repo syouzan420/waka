@@ -17,11 +17,12 @@ instance View EditView where
 
 renderForm :: Schedule -> Html
 renderForm schedule = formFor schedule [hsx|
-    {(textField #userId)}
+    {(textField #userId) {fieldValue = show currentUser.id}}
     {(textField #filledDate)}
     {(textField #filledTime)}
     {(textField #scheduleType)}
     {(textField #description)}
+    {(checkboxField #booked)}
     {submitButton}
 
 |]

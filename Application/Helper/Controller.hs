@@ -10,6 +10,7 @@ import Generated.Types
 import Data.Char (isDigit)
 import qualified Data.Text as T
 
+
 type instance CurrentUserRecord = User
 
 -- Here you can add functions which are available in all your controllers
@@ -25,3 +26,4 @@ isDuration txt = let stxt = T.splitOn "-" txt
                      b = length stxt == 2 && isTTime (head stxt) && isTTime (last stxt)
                   in if b then Success
                           else Failure "9時から10時なら 9-10 みたいに入れてね"
+

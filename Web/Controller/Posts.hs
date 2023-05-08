@@ -15,7 +15,7 @@ instance Controller PostsController where
         render IndexView { .. }
 
     action NewPostAction = do
-        ensureIsUser
+        ensureIsTeru
         let post = newRecord
         render NewView { .. }
 
@@ -26,6 +26,7 @@ instance Controller PostsController where
         render ShowView { .. }
 
     action EditPostAction { postId } = do
+        ensureIsTeru
         post <- fetch postId
         render EditView { .. }
 
@@ -52,6 +53,7 @@ instance Controller PostsController where
                     redirectTo PostsAction
 
     action DeletePostAction { postId } = do
+        ensureIsTeru
         post <- fetch postId
         deleteRecord post
         setSuccessMessage "Post deleted"

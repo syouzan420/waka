@@ -30,9 +30,11 @@ instance CanSelect Duration where
 
 renderForm :: Schedule -> Text -> [Schtype] -> [Duration] -> Html
 renderForm schedule ymd schtypes durations = formFor schedule [hsx|
-    {(textField #filledDate) {fieldValue = ymd}}
+    {(hiddenField #userId)}
+    {(hiddenField #filledDate) {fieldValue = ymd}}
     {(selectField #filledTime durations)}
     {(selectField #scheduleType schtypes)}
     {(textField #description)}
+    {(checkboxField #booked)}
     {submitButton}
 |]

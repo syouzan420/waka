@@ -1,6 +1,6 @@
 module Application.Helper.View (
   module IHP.LoginSupport.Helper.View,
-    generateCalenderHtml,generateCalenderWithNoLink,splitYearMonthDay
+    generateCalenderHtml,splitYearMonthDay
                                ) where
 
 import Prelude hiding (show) 
@@ -104,32 +104,6 @@ filledWeekDaysList dlst =
 daysList :: Year -> Month -> [[Day]]
 daysList ye mo = filledWeekDaysList (weekDaysList (dayYobiList ye mo))
 
-generateCalenderHtml :: (T.Text -> T.Text) -> Year -> Month -> Html 
-generateCalenderHtml link ye mo = preEscapedToHtml ("<table>"<>tbl<>"</table>\n")
-  where dlst = daysList ye mo 
-        hdr = foldl (\acc yb -> acc<>"<th>"<>yb<>"</th>") "" ["日","月","火","水","木","金","土"]
-        mdl = foldl (\acc wk -> acc<>"<tr>"<>
-                foldl (\acc dy -> acc<>"<td>"<>"<a href="<>(link (show dy))<>">"
-                    <>(if dy==0 then "" else show dy)<>"</a></td>") "" wk
-                                           <>"</tr>") "" dlst
-        tbl = hdr<>mdl 
-
-generateCalenderWithNoLink :: Year -> Month -> Html 
-generateCalenderWithNoLink ye mo = preEscapedToHtml ("<table>"<>tbl<>"</table>\n")
-  where dlst = daysList ye mo 
-        hdr = foldl (\acc yb -> acc<>"<th>"<>yb<>"</th>") "" ["日","月","火","水","木","金","土"]
-        mdl = foldl (\acc wk -> acc<>"<tr>"<>
-                foldl (\acc dy -> acc<>"<td>"<>"<a>"
-                    <>(if dy==0 then "" else show dy)<>"</a></td>") "" wk
-                                           <>"</tr>") "" dlst
-        tbl = hdr<>mdl 
-
-splitYearMonthDay :: YearMonthDay -> (Year, Month, Day)
-splitYearMonthDay ymd =
-  let (a:b:c:d:e:f:gs) = T.unpack ymd
-      (yr,mo,da) = (read [a,b,c,d], read [e,f], read gs)
-                         in if mo>12 then (yr,read [e],read (f:gs)) else (yr,mo,da)
-
 isTTime :: T.Text -> Bool
 isTTime txt = let tlen = T.length txt
                in tlen < 5 && T.all isDigit txt && 
@@ -140,3 +114,20 @@ isTTime txt = let tlen = T.length txt
 isDuration :: T.Text -> Bool
 isDuration txt = let stxt = T.splitOn "-" txt
                   in length stxt == 2 && isTTime (head stxt) && isTTime (last stxt)
+
+splitYearMonthDay :: YearMonthDay -> (Year, Month, Day)
+splitYearMonthDay ymd =
+  let (a:b:c:d:e:f:gs) = T.unpack ymd
+      (yr,mo,da) = (read [a,b,c,d], read [e,f], read gs)
+                         in if mo>12 then (yr,read [e],read (f:gs)) else (yr,mo,da)
+
+generateCalenderHtml :: (T.Text -> T.Text) -> Year -> Month -> Html 
+generateCalenderHtml link ye mo = preEscapedToHtml ("<table>"<>tbl<>"</table>\n")
+  where dlst = daysList ye mo 
+        hdr = foldl (\acc yb -> acc<>"<th>"<>yb<>"</th>") "" ["日","月","火","水","木","金","土"]
+        mdl = foldl (\acc wk -> acc<>"<tr>"<>
+                foldl (\acc dy -> acc<>"<td>"<>"<a"<>(link (show dy))<>">"
+                    <>(if dy==0 then "" else show dy)<>"</a></td>") "" wk
+                                           <>"</tr>") "" dlst
+        tbl = hdr<>mdl 
+

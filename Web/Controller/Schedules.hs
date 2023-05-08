@@ -5,6 +5,7 @@ import Web.View.Schedules.Index
 import Web.View.Schedules.New
 import Web.View.Schedules.Edit
 import Web.View.Schedules.Show
+import Web.View.Schedules.Book
 import IHP.SEO.Sitemap.ControllerFunctions
 import Data.Text.Encoding
 import qualified Data.Text as T
@@ -16,14 +17,12 @@ instance Controller SchedulesController where
           |> fetch
       currentTime <- getCurrentTime
       let ymd = T.concat (T.splitOn "-" (formatUTCTime currentTime))
-      setSuccessMessage ymd 
       render IndexView { .. }
 
   action OtherSchedulesAction { ymd } = do
       schedules <- query @Schedule
           |> orderByDesc #createdAt
           |> fetch
-      setSuccessMessage ymd
       render IndexView { .. }
   
   action NewScheduleAction { ymd } = do
@@ -31,17 +30,32 @@ instance Controller SchedulesController where
       let schedule = newRecord
             |> set #filledDate ymd
             |> set #userId currentUser.id
-            |> set #booked False
       schtypes <- query @Schtype |> fetch
       durations <- query @Duration |> fetch
-      setSuccessMessage ymd 
       render NewView { .. }
+
+  action NewBookingAction { ymd } = do
+      ensureIsUser
+      schedules <- query @Schedule
+          |> filterWhere (#filledDate, ymd)
+          |> filterWhere (#scheduleType, "授業")
+          |> queryOr
+              (filterWhere (#booked, False))
+              (filterWhere (#userId, currentUserId))
+          |> fetch
+      render BookView { .. }
 
   action ShowScheduleAction { scheduleId } = do
       schedule <- fetch scheduleId
       render ShowView { .. }
 
   action EditScheduleAction { scheduleId } = do
+      ensureIsTeru
+      schedule <- fetch scheduleId
+      render EditView { .. }
+
+  action EditUserBookAction { scheduleId } = do
+      ensureIsUser
       schedule <- fetch scheduleId
       render EditView { .. }
 
@@ -59,7 +73,6 @@ instance Controller SchedulesController where
   action CreateScheduleAction = do
     let schedule = newRecord @Schedule
             |> set #userId currentUser.id
-            |> set #booked False
         ymd = filledDate schedule
     schtypes <- query @Schtype |> fetch
     durations <- query @Duration |> fetch
@@ -73,13 +86,14 @@ instance Controller SchedulesController where
                 redirectTo SchedulesAction
 
   action DeleteScheduleAction { scheduleId } = do
+      ensureIsTeru
       schedule <- fetch scheduleId
       deleteRecord schedule
       setSuccessMessage "Schedule deleted"
       redirectTo SchedulesAction
 
 buildSchedule schedule = schedule
-    |> fill @["filledDate","filledTime", "scheduleType", "description"]
+    |> fill @["userId","filledDate","filledTime", "scheduleType", "description", "booked"]
     |> validateField #filledDate nonEmpty 
     |> validateField #filledTime nonEmpty 
     |> validateField #scheduleType nonEmpty

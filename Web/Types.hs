@@ -32,9 +32,11 @@ data SchedulesController
     = SchedulesAction 
     | OtherSchedulesAction { ymd :: !Text }
     | NewScheduleAction { ymd :: !Text }
+    | NewBookingAction  { ymd :: !Text }
     | ShowScheduleAction { scheduleId :: !(Id Schedule) }
     | CreateScheduleAction 
     | EditScheduleAction { scheduleId :: !(Id Schedule) }
+    | EditUserBookAction { scheduleId :: !(Id Schedule) }
     | UpdateScheduleAction { scheduleId :: !(Id Schedule) }
     | DeleteScheduleAction { scheduleId :: !(Id Schedule) }
     deriving (Eq, Show, Data)

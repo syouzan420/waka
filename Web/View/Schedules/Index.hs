@@ -10,12 +10,15 @@ instance View IndexView where
     <a href={OtherSchedulesAction (subMonth ymd)}>←←</a>
     {showYearMonth ymd}
     <a href={OtherSchedulesAction (addMonth ymd)}>→→</a>
-    {makeCalender ymd}
+    {makeCalender ymd schedules}
     <div class="table-responsive">
       <table class="table">
         <thead>
           <tr>
             <th>Schedule</th>
+            <th>時間</th>
+            <th>種類</th>
+            <th>予約</th>
             <th></th>
             <th></th>
           </tr>
@@ -29,17 +32,30 @@ instance View IndexView where
           [ breadcrumbLink "Schedules" SchedulesAction
           ]
 
-makeCalender :: Text -> Html
-makeCalender ymd = 
-  case currentUserOrNothing of
-      Just currentUser -> do
-        let cid = show$currentUser.id
-        if cid==userTeru 
-          then generateCalenderHtml (newSchedulePath ymd) (yearNow ymd) (monthNow ymd) 
-          else generateCalenderHtml (newSchedulePath ymd) (yearNow ymd) (monthNow ymd) 
-      Nothing -> generateCalenderWithNoLink (yearNow ymd) (monthNow ymd) 
+getBookableDates :: [Schedule] -> Text -> [Text]
+getBookableDates schs uid = nub$map (\s -> show$dayNow (s.filledDate))
+            (filter (\d -> d.scheduleType == "授業" &&
+              (show d.userId ==uid || d.booked==False)) schs)
+
+getFilledDates :: [Schedule] -> [Text]
+getFilledDates schs = nub$map (\s -> show$dayNow (s.filledDate)) schs
+
+makeCalender :: Text -> [Schedule] -> Html
+makeCalender ymd schedules = 
+  generateCalenderHtml (newSchedulePath ymd) (yearNow ymd) (monthNow ymd) 
     where
-      newSchedulePath ymd dy = pathTo (NewScheduleAction (yearMonth ymd++digitShow dy))
+      newSchedulePath ymd dy = 
+          case currentUserOrNothing of
+              Just currentUser -> do
+                let cid = show$currentUser.id
+                if cid == userTeru
+                  then if dy `elem` getFilledDates schedules
+                    then " style=\"color:green\"; href="<>pathTo (NewScheduleAction (yearMonth ymd++digitShow dy))
+                    else " style=\"color:blue\"; href="<>pathTo (NewScheduleAction (yearMonth ymd++digitShow dy))
+                  else if dy `elem` getBookableDates schedules cid
+                    then " href="<>pathTo (NewBookingAction (yearMonth ymd++digitShow dy))
+                    else ""
+              Nothing -> ""
 
 digitShow :: Text -> Text
 digitShow dy = if dy `elem` ["1","2","3","4","5","6","7","8","9"] then "0"<>dy else dy
@@ -77,6 +93,9 @@ renderSchedule :: Schedule -> Html
 renderSchedule schedule = [hsx|
   <tr>
     <td><a href={ShowScheduleAction schedule.id}>{schedule.filledDate}</a></td>
+    <td><a>{schedule.filledTime}</a></td>
+    <td><a>{schedule.scheduleType}</a></td>
+    <td><a>{schedule.booked}</a></td>
     <td><a href={EditScheduleAction schedule.id} class="text-muted">Edit</a></td>
     <td><a href={DeleteScheduleAction schedule.id} class="js-delete text-muted">Delete</a></td>
   </tr>
