@@ -33,12 +33,11 @@ instance View IndexView where
           ]
 
 getBookableDates :: [Schedule] -> Text -> [Text]
-getBookableDates schs uid = nub$map (\s -> show$dayNow (s.filledDate))
-            (filter (\d -> d.scheduleType == "授業" &&
-              (show d.userId ==uid || d.booked==False)) schs)
+getBookableDates schs uid = nub$map filledDate
+            (filter (\d -> (show d.userId ==uid || d.booked==False)) schs)
 
 getFilledDates :: [Schedule] -> [Text]
-getFilledDates schs = nub$map (\s -> show$dayNow (s.filledDate)) schs
+getFilledDates schs = nub$map filledDate schs
 
 makeCalender :: Text -> [Schedule] -> Html
 makeCalender ymd schedules = 
@@ -48,12 +47,13 @@ makeCalender ymd schedules =
           case currentUserOrNothing of
               Just currentUser -> do
                 let cid = show$currentUser.id
+                    targetDate = yearMonth ymd ++ digitShow dy
                 if cid == userTeru || cid == userTeruOverThere
-                  then if dy `elem` getFilledDates schedules
-                    then " style=\"color:green\"; href="<>pathTo (NewScheduleAction (yearMonth ymd++digitShow dy))
-                    else " style=\"color:blue\"; href="<>pathTo (NewScheduleAction (yearMonth ymd++digitShow dy))
-                  else if dy `elem` getBookableDates schedules cid
-                    then " href="<>pathTo (NewBookingAction (yearMonth ymd++digitShow dy))
+                  then if targetDate `elem` getFilledDates schedules
+                    then " style=\"color:green\"; href="<>pathTo (NewScheduleAction targetDate)
+                    else " style=\"color:blue\"; href="<>pathTo (NewScheduleAction targetDate)
+                  else if targetDate `elem` getBookableDates schedules cid
+                    then " href="<>pathTo (NewBookingAction targetDate)
                     else ""
               Nothing -> ""
 
