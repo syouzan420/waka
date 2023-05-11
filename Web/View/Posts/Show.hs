@@ -44,7 +44,7 @@ renderMarkdown text =
 oneLineMarkdown :: Text -> Text
 oneLineMarkdown text =
   case text |> MMark.parse "" of
-    Left error -> text
+    Left error -> text 
     Right markdown -> MMark.render markdown |> tshow
 
 renderComment comment = [hsx|
@@ -63,8 +63,8 @@ renderMarkdown2 text =
 useExtendMarkdown :: Text -> Text 
 useExtendMarkdown text = 
   case text |> MMark.parse "" of
-    Left error -> text 
-    Right markdown -> MMark.useExtension (MMath.mathJax (head (unpack text))) markdown 
+    Left error -> "something goes wrong" 
+    Right markdown -> MMark.useExtension (MMath.mathJax (Just '\\')) markdown
                         |> MMark.render |> tshow
 -----------
 
