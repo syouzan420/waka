@@ -31,10 +31,21 @@ renderMain post = [hsx|
         <div style="font-size: 1.2rem; font-weight: 300">{post.body |> renderMarkdown}</div>
    |]
 
-renderMarkdown text = 
+--renderMarkdown text = 
+--  case text |> MMark.parse "" of
+--    Left error -> preEscapedToHtml text 
+--    Right markdown -> MMark.render markdown |> tshow |> preEscapedToHtml
+
+renderMarkdown :: Text -> Html
+renderMarkdown text =
+  let text2 = map oneLineMarkdown (lines text)
+   in unlines text2 |> preEscapedToHtml 
+
+oneLineMarkdown :: Text -> Text
+oneLineMarkdown text =
   case text |> MMark.parse "" of
-    Left error -> preEscapedToHtml text 
-    Right markdown -> MMark.render markdown |> tshow |> preEscapedToHtml
+    Left error -> text
+    Right markdown -> MMark.render markdown |> tshow
 
 renderComment comment = [hsx|
       <div class="mt-4">
@@ -42,6 +53,20 @@ renderComment comment = [hsx|
         <p>{comment.body}</p>
       </div>
     |]
+
+-- this is the test for MathJax Markdown
+renderMarkdown2 :: Text -> Html
+renderMarkdown2 text =
+  let text2 = map useExtendMarkdown (lines text)
+   in unlines text2 |> preEscapedToHtml 
+
+useExtendMarkdown :: Text -> Text 
+useExtendMarkdown text = 
+  case text |> MMark.parse "" of
+    Left error -> text 
+    Right markdown -> MMark.useExtension (MMath.mathJax (head (unpack text))) markdown 
+                        |> MMark.render |> tshow
+-----------
 
 renderTate :: (Include "comments" Post) -> Html
 renderTate post = if post.tate then [hsx|
@@ -68,18 +93,4 @@ scriptMath = [hsx|
   });
   </script>
   |]
-
--- this is the test for MathJax Markdown
-renderMarkdown2 :: Text -> Html
-renderMarkdown2 text =
-  let text2 = map useExtendMarkdown (lines text)
-   in unlines text2 |> preEscapedToHtml 
-
-useExtendMarkdown :: Text -> Text 
-useExtendMarkdown text = 
-  case text |> MMark.parse "" of
-    Left errorMark -> text 
-    Right markdown -> MMark.useExtension (MMath.mathJax (head (unpack text))) markdown 
-                        |> MMark.render |> tshow
------------
 
