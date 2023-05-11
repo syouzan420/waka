@@ -8,11 +8,7 @@ instance View ShowView where
     html ShowView { .. } = [hsx|
         {breadcrumb}
         <div style="background-color: #657b83; padding: 2rem; color:hsla(196, 13%, 96%, 1); border-radius: 4px">
-        <div style="writing-mode: vertical-rl; overflow-x:scroll; max-width:100%;  max-height: 480px; margin-left: auto">
-        <h1>{post.title}</h1>
-        <p >{post.createdAt |> dateTime}</p>
-        <div style="font-size: 1.2rem; font-weight: 300">{post.body |> renderMarkdown}</div>
-        </div>
+        {renderTate post}
         </div>
 
         <a href={NewCommentAction post.id}>Add Comment</a>
@@ -25,6 +21,14 @@ instance View ShowView where
                             [ breadcrumbLink "Posts" PostsAction
                             , breadcrumbText "Show Post"
                             ]
+
+renderMain post = [hsx|
+        <h1>{post.title}</h1>
+        <p >{post.createdAt |> dateTime}</p>
+        <div style="font-size: 1.2rem; font-weight: 300">{post.body |> renderMarkdown}</div>
+   |]
+
+
 renderMarkdown text = 
   case text |> MMark.parse "" of
     Left error -> "Something went wrong"
@@ -37,3 +41,14 @@ renderComment comment = [hsx|
       </div>
     |]
 
+renderTate :: (Include "comments" Post) -> Html
+renderTate post = if post.tate then [hsx|
+        <div style="writing-mode: vertical-rl; overflow-x:scroll; max-width:100%;  max-height: 480px; margin-left: auto">
+        {renderMain post}
+        </div>
+   |]
+                               else [hsx|
+        <div style="overflow-x:scroll; max-width:100%;  max-height: 480px; margin-left: auto">
+        {renderMain post}
+        </div>
+   |]

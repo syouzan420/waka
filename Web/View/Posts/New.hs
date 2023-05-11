@@ -6,7 +6,7 @@ data NewView = NewView { post :: Post }
 instance View NewView where
     html NewView { .. } = [hsx|
         {breadcrumb}
-        <h1>New Post</h1>
+        <h1>新規</h1>
         {renderForm post}
     |]
         where
@@ -18,6 +18,7 @@ instance View NewView where
 renderForm :: Post -> Html
 renderForm post = formFor post [hsx|
     {(textField #title)}
+    {(checkboxField #tate){fieldLabel = "縦書き"}}
     {(textareaField #body){helpText = "You can use Markdown here"}}
     {submitButton}
 

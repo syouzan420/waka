@@ -6,7 +6,7 @@ data EditView = EditView { post :: Post }
 instance View EditView where
     html EditView { .. } = [hsx|
         {breadcrumb}
-        <h1>Edit Post</h1>
+        <h1>編集</h1>
         {renderForm post}
     |]
         where
@@ -18,6 +18,7 @@ instance View EditView where
 renderForm :: Post -> Html
 renderForm post = formFor post [hsx|
     {(textField #title)}
+    {(checkboxField #tate){fieldLabel = "縦書き"}}
     {(textareaField #body){helpText = "You can use Markdown here"}}
     {submitButton}
 
