@@ -6,7 +6,6 @@ data IndexView = IndexView { posts :: [Post]  }
 instance View IndexView where
     html IndexView { .. } = [hsx|
         {breadcrumb}
-
         <h1>ことのはくばり<a href={pathTo NewPostAction} class="btn btn-primary ms-4">+ New</a></h1>
         <div class="table-responsive">
             <table class="table">
@@ -35,3 +34,4 @@ renderPost post = [hsx|
         <td><a href={DeletePostAction post.id} class="js-delete text-muted">Delete</a></td>
     </tr>
 |]
+

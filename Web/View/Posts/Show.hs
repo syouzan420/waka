@@ -7,6 +7,7 @@ data ShowView = ShowView { post :: Include "comments" Post }
 instance View ShowView where
     html ShowView { .. } = [hsx|
         {breadcrumb}
+        {scriptMath}
         <div style="background-color: #657b83; padding: 2rem; color:hsla(196, 13%, 96%, 1); border-radius: 4px">
         {renderTate post}
         </div>
@@ -28,10 +29,11 @@ renderMain post = [hsx|
         <div style="font-size: 1.2rem; font-weight: 300">{post.body |> renderMarkdown}</div>
    |]
 
+--        <div style="font-size: 1.2rem; font-weight: 300">{post.body |> renderMarkdown}</div>
 
 renderMarkdown text = 
   case text |> MMark.parse "" of
-    Left error -> "Something went wrong"
+    Left error -> preEscapedToHtml text 
     Right markdown -> MMark.render markdown |> tshow |> preEscapedToHtml
 
 renderComment comment = [hsx|
@@ -52,3 +54,17 @@ renderTate post = if post.tate then [hsx|
         {renderMain post}
         </div>
    |]
+
+scriptMath :: Html
+scriptMath = [hsx|
+  <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+  tex2jax: {
+  inlineMath: [['$', '$'] ],
+  displayMath: [ ['$$','$$'], ["\\[","\\]"] ]
+  }
+  });
+  </script>
+  |]

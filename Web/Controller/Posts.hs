@@ -64,7 +64,6 @@ buildPost post = post
     |> fill @["title", "tate", "body"]
     |> validateField #title nonEmpty
     |> validateField #body nonEmpty
-    |> validateField #body isMarkdown
 
 isMarkdown :: Text -> ValidatorResult
 isMarkdown text =
