@@ -17,9 +17,10 @@ instance Controller SchedulesController where
           |> fetch
       currentTime <- getCurrentTime
       let ymd = T.concat (T.splitOn "-" (formatUTCTime currentTime))
+      let tdy = ymd
       render IndexView { .. }
 
-  action OtherSchedulesAction { ymd } = do
+  action OtherSchedulesAction { ymd, tdy } = do
       schedules <- query @Schedule
           |> orderByDesc #createdAt
           |> fetch
@@ -38,7 +39,6 @@ instance Controller SchedulesController where
       ensureIsUser
       schedules <- query @Schedule
           |> filterWhere (#filledDate, ymd)
-          |> filterWhere (#scheduleType, "授業")
           |> queryOr
               (filterWhere (#booked, False))
               (filterWhere (#userId, currentUserId))

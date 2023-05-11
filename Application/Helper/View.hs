@@ -126,7 +126,7 @@ generateCalenderHtml link ye mo = preEscapedToHtml ("<table>"<>tbl<>"</table>\n"
   where dlst = daysList ye mo 
         hdr = foldl (\acc yb -> acc<>"<th>"<>yb<>"</th>") "" ["日","月","火","水","木","金","土"]
         mdl = foldl (\acc wk -> acc<>"<tr>"<>
-                foldl (\acc dy -> acc<>"<td>"<>"<a"<>(link (show dy))<>">"
+                foldl (\acc dy -> acc<>"<td>"<>"<a "<>(link (show dy))<>">"
                     <>(if dy==0 then "" else show dy)<>"</a></td>") "" wk
                                            <>"</tr>") "" dlst
         tbl = hdr<>mdl 

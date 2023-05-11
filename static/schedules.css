@@ -1,0 +1,12 @@
+#schedules-index a {
+  font-size: 2em;
+}
+
+table th {
+  text-align : center;
+}
+
+table td {
+  text-align : center;
+  padding : 3px 10px;
+}

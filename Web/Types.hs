@@ -30,7 +30,7 @@ data PostsController
 
 data SchedulesController
     = SchedulesAction 
-    | OtherSchedulesAction { ymd :: !Text }
+    | OtherSchedulesAction { ymd :: !Text , tdy :: !Text}
     | NewScheduleAction { ymd :: !Text }
     | NewBookingAction  { ymd :: !Text }
     | ShowScheduleAction { scheduleId :: !(Id Schedule) }

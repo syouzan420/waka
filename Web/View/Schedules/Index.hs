@@ -1,16 +1,18 @@
 module Web.View.Schedules.Index where
 import Web.View.Prelude
 
-data IndexView = IndexView { schedules :: [Schedule], ymd :: Text }
+data IndexView = IndexView { schedules :: [Schedule], ymd :: Text, tdy :: Text }
 
 instance View IndexView where
   html IndexView { .. } = [hsx|
     {breadcrumb}
     <h1>よてい</h1>
-    <a href={OtherSchedulesAction (subMonth ymd)}>←←</a>
-    {showYearMonth ymd}
-    <a href={OtherSchedulesAction (addMonth ymd)}>→→</a>
-    {makeCalender ymd schedules}
+    <div id={currentViewId}>
+      <a href={OtherSchedulesAction (subMonth ymd) tdy}>←←</a>
+      {showYearMonth ymd}
+      <a href={OtherSchedulesAction (addMonth ymd) tdy}>→→</a>
+    {makeCalender ymd tdy schedules}
+    </div>
     <div class="table-responsive">
       <table class="table">
         <thead>
@@ -39,20 +41,27 @@ getBookableDates schs uid = nub$map filledDate
 getFilledDates :: [Schedule] -> [Text]
 getFilledDates schs = nub$map filledDate schs
 
-makeCalender :: Text -> [Schedule] -> Html
-makeCalender ymd schedules = 
-  generateCalenderHtml (newSchedulePath ymd) (yearNow ymd) (monthNow ymd) 
+isDatePast :: Text -> Text -> Bool
+isDatePast presentDate targetDate =
+  let (py,pm,pd) = splitYearMonthDay presentDate
+      (ty,tm,td) = splitYearMonthDay targetDate
+   in ty < py || (ty==py && tm<pm) || (ty==py && tm==pm && td<pd)
+
+makeCalender :: Text -> Text -> [Schedule] -> Html
+makeCalender ymd tdy schedules = 
+  generateCalenderHtml (newSchedulePath ymd tdy) (yearNow ymd) (monthNow ymd) 
     where
-      newSchedulePath ymd dy = 
+      newSchedulePath ymd tdy dy = 
           case currentUserOrNothing of
               Just currentUser -> do
                 let cid = show$currentUser.id
                     targetDate = yearMonth ymd ++ digitShow dy
                 if cid == userTeru || cid == userTeruOverThere
                   then if targetDate `elem` getFilledDates schedules
-                    then " style=\"color:green\"; href="<>pathTo (NewScheduleAction targetDate)
-                    else " style=\"color:blue\"; href="<>pathTo (NewScheduleAction targetDate)
+                    then "style=\"color:green\"; href="<>pathTo (NewScheduleAction targetDate)
+                    else "style=\"color:blue\"; href="<>pathTo (NewScheduleAction targetDate)
                   else if targetDate `elem` getBookableDates schedules cid
+                            && not (isDatePast tdy targetDate)
                     then " href="<>pathTo (NewBookingAction targetDate)
                     else ""
               Nothing -> ""
