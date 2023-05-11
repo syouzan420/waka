@@ -50,8 +50,7 @@ instance Controller PostsController where
                 Right post -> do
                     post <- post |> createRecord
                     setSuccessMessage "Post created"
-                    redirectToPath "/Posts"
- --                   redirectTo PostsAction
+                    redirectToPath PostAction 
 
     action DeletePostAction { postId } = do
         ensureIsTeru
