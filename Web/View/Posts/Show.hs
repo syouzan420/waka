@@ -1,6 +1,8 @@
 module Web.View.Posts.Show where
 import Web.View.Prelude
+import Data.Text (unpack) 
 import qualified Text.MMark as MMark
+import qualified Text.MMark.Extension.MathJax as MMath
 
 data ShowView = ShowView { post :: Include "comments" Post }
 
@@ -28,8 +30,6 @@ renderMain post = [hsx|
         <p >{post.createdAt |> dateTime}</p>
         <div style="font-size: 1.2rem; font-weight: 300">{post.body |> renderMarkdown}</div>
    |]
-
---        <div style="font-size: 1.2rem; font-weight: 300">{post.body |> renderMarkdown}</div>
 
 renderMarkdown text = 
   case text |> MMark.parse "" of
@@ -68,3 +68,18 @@ scriptMath = [hsx|
   });
   </script>
   |]
+
+-- this is the test for MathJax Markdown
+renderMarkdown2 :: Text -> Html
+renderMarkdown2 text =
+  let text2 = map useExtendMarkdown (lines text)
+   in unlines text2 |> preEscapedToHtml 
+
+useExtendMarkdown :: Text -> Text 
+useExtendMarkdown text = 
+  case text |> MMark.parse "" of
+    Left errorMark -> text 
+    Right markdown -> MMark.useExtension (MMath.mathJax (head (unpack text))) markdown 
+                        |> MMark.render |> tshow
+-----------
+
