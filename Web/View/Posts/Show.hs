@@ -48,7 +48,7 @@ renderTate post = if post.tate then [hsx|
         </div>
    |]
                                else [hsx|
-        <div style="overflow-x:scroll; max-width:100%;  max-height: 480px; margin-left: auto">
+        <div style="max-width:100%; ">
         {renderMain post}
         </div>
    |]
