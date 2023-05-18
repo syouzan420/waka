@@ -7,6 +7,7 @@ instance View IndexView where
   html IndexView { .. } = [hsx|
     {breadcrumb}
     <h1>よてい</h1>
+    <p>{intoDuration}</p>
     <div id={currentViewId}>
       <a href={OtherSchedulesAction (subMonth ymd) tdy}>←←</a>
       {showYearMonth ymd}
@@ -98,6 +99,28 @@ showYearMonth :: Text -> Html
 showYearMonth ymd = let (y,m,_) = splitYearMonthDay ymd
                      in [hsx| <a> {y} 年 {m} 月 </a> |]
 
+
+intoDuration :: Html
+intoDuration = forAdminHtml [hsx| <a href={DurationsAction}>時間帯の設定</a> |]
+
+intoEdit :: Schedule -> Html
+intoEdit schedule = forAdminHtml 
+          [hsx| <a href={EditScheduleAction schedule.id} class="text-muted">Edit</a> |]
+
+intoDelete :: Schedule -> Html
+intoDelete schedule = forAdminHtml
+          [hsx| <a href={DeleteScheduleAction schedule.id} class="js-delete text-muted">Delete</a> |]
+
+forAdminHtml :: Html -> Html
+forAdminHtml htm = case currentUserOrNothing of
+                    Just currentUser -> do
+                      let cid = show$currentUser.id
+                      if cid == userTeru || cid == userTeruOverThere 
+                        then htm 
+                        else [hsx| |]
+                    Nothing -> [hsx| |]
+
+                 
 renderSchedule :: Schedule -> Html
 renderSchedule schedule = [hsx|
   <tr>
@@ -105,8 +128,8 @@ renderSchedule schedule = [hsx|
     <td><a>{schedule.filledTime}</a></td>
     <td><a>{schedule.scheduleType}</a></td>
     <td><a>{schedule.booked}</a></td>
-    <td><a href={EditScheduleAction schedule.id} class="text-muted">Edit</a></td>
-    <td><a href={DeleteScheduleAction schedule.id} class="js-delete text-muted">Delete</a></td>
+    <td>{intoEdit schedule}</td>
+    <td>{intoDelete schedule}</td>
   </tr>
   |]
 
