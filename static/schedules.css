@@ -1,12 +1,17 @@
-#schedules-index a {
+#schedules-index a{
   font-size: 2em;
 }
 
-table th {
+#schedules-index a:visited {
+  color: blue 
+}
+
+#schedules-index table th {
   text-align : center;
 }
 
-table td {
+#schedules-index table td {
   text-align : center;
   padding : 3px 10px;
 }
+

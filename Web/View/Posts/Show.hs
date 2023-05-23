@@ -10,8 +10,10 @@ instance View ShowView where
     html ShowView { .. } = [hsx|
         {breadcrumb}
         {scriptMath}
+        <div id={currentViewId}>
         <div style="background-color: #657b83; padding: 2rem; color:hsla(196, 13%, 96%, 1); border-radius: 4px">
         {renderTate post}
+        </div>
         </div>
 
         <a href={NewCommentAction post.id}>Add Comment</a>
