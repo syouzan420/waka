@@ -16,7 +16,10 @@ userTeruOverThere = "6a03be6b-32c7-41b8-975e-e19d40032069"
 data WebApplication = WebApplication deriving (Eq, Show)
 
 
-data StaticController = WelcomeAction deriving (Eq, Show, Data)
+data StaticController 
+    = WelcomeAction
+    | CodeAction
+    deriving (Eq, Show, Data)
 
 data PostsController
     = PostsAction
