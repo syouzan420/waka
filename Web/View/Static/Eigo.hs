@@ -2,7 +2,7 @@
 module Web.View.Static.Eigo(eigo) where
 
 import Prelude
-import System.Random (randomRIO)
+import System.Random (randomR,StdGen,mkStdGen)
 import System.Environment(getArgs)
 import qualified Data.Map.Strict as M
 import qualified Data.Text as T
@@ -107,47 +107,41 @@ nounJ = M.fromList
   ,("hello","こんにちは"),("thanks","ありがとう")
   ,("him","彼"),("her","彼女"),("you","あなた")]
 
+getRand :: Int -> StdGen -> (Int,StdGen) 
+getRand i g = randomR (0,i-1) g
 
-getRand :: Int -> IO Int
-getRand i = randomRIO (0,i-1)
-
-makeVerbChange :: Int -> M.Map JpVerb (Verb,[Wtype],[Jtype],JpVerb,JpVerb) -> (T.Text,T.Text)
-makeVerbChange 0 _ = ("","")
-makeVerbChange i verbL = 
+makeVerbChange :: StdGen -> Int -> M.Map JpVerb (Verb,[Wtype],[Jtype],JpVerb,JpVerb) -> (T.Text,T.Text)
+makeVerbChange _ 0 _ = ("","")
+makeVerbChange gen i verbL = 
   let verSize = M.size verbL
-      vr = verSize - 1
---  vr <- getRand verSize
+      (vr,gen2) = getRand verSize gen
       (jverb,(everb,_,_,_,_)) = M.elemAt vr verbL
       nverbL = M.deleteAt vr verbL
       nverbL' = if nverbL==M.empty then verbJ else nverbL
       everbP = makeVerb Am False False everb
-      wv = 1
---  wv <- getRand 2
+      (wv,gen3) = getRand 2 gen2
       qverbN = if wv==0 then "<     >" else everb
       qverbP = if wv==1 then "<     >" else everbP
-      (newQuestion,newAnswer) = makeVerbChange (i-1) nverbL'
+      (newQuestion,newAnswer) = makeVerbChange gen3 (i-1) nverbL'
       question = T.pack (show i) <> ".  " <> jverb <> ":   現在形: " <> qverbN <> "   過去形: " <> qverbP 
       answer = T.pack (show i) <> ".  " <> jverb <> ":   現在形: " <> everb <> "   過去形: " <> everbP 
    in (newQuestion <> question <> "\n", newAnswer <> answer <> "\n")
 
 
-makeSentence :: Int -> Qtype -> M.Map JpSubject Subject -> M.Map JpVerb (Verb,[Wtype],[Jtype],JpVerb,JpVerb)
+makeSentence :: StdGen -> Int -> Qtype -> M.Map JpSubject Subject -> M.Map JpVerb (Verb,[Wtype],[Jtype],JpVerb,JpVerb)
                     -> (T.Text,T.Text) 
-makeSentence 0 _ _ _ = ("","")
-makeSentence i qt@(isub,iverN,iverP,iverI) sujL verbL = 
+makeSentence _ 0 _ _ _ = ("","")
+makeSentence gen i qt@(isub,iverN,iverP,iverI) sujL verbL = 
   let subSize = M.size sujL  
-      sr = subSize-1
---  sr <- getRand subSize
+      (sr,gen2) = getRand subSize gen
       (jsub,esub) = M.elemAt sr sujL
       nsujL = M.deleteAt sr sujL
       be = fromMaybe Be (M.lookup esub subB)
       verSize = M.size verbL
-      vr = verSize - 1  
---  vr <- getRand verSize
+      (vr,gen3) = getRand verSize gen2  
       (jverb,(everb,verbteL,verbtjL,jverbP,jverbI)) = M.elemAt vr verbL
       nverbL = M.deleteAt vr verbL
-      wr = 1
---  wr <- getRand 2
+      (wr,gen4) = getRand 2 gen3
       ipr = if iverN && iverP then wr==0 else iverN || not (iverP || False) 
       verb = makeVerb be ipr iverI everb
       tseL = map typeToString verbteL
@@ -158,7 +152,7 @@ makeSentence i qt@(isub,iverN,iverP,iverI) sujL verbL =
       qresL = qWord S False qt esub : qWord V False qt verb : tseL
       nsujL' = if nsujL==M.empty then subJ else nsujL 
       nverbL' = if nverbL==M.empty then verbJ else nverbL
-      (newQuestion,newAnswer) = makeSentence (i-1) qt nsujL' nverbL'
+      (newQuestion,newAnswer) = makeSentence gen4 (i-1) qt nsujL' nverbL'
       question = (T.pack (show i) <> ".  " <> T.unwords jresL) <> "\n" <> ("  " <> T.unwords qresL <> ".")
       answer = T.pack (show i) <> ".  " <> T.unwords eresL <> "." 
    in (newQuestion <> question <> "\n", newAnswer <> answer <> "\n")
@@ -266,15 +260,19 @@ listAToLatex (x:xs) = x:"":listAToLatex xs
 
 makePages :: [String] -> (T.Text,T.Text) -> (T.Text,T.Text)
 makePages arg (pq,pa) = 
-  let nl = if null arg then 15 else read (head arg) :: Int
-      qts = if null arg then "3" else if null (tail arg) then "3" else head$tail arg
+  let rnum = if null arg then 2023 else read (head arg) :: Int
+      nl = if null arg then 15 else if null (tail arg) then 15 else read (head$tail arg) :: Int
+      qts = if null arg then "3" 
+                        else if null (tail arg) then "3" 
+                        else if null (drop 2 arg) then "3" else head$drop 2 arg
       qt = if all isDigit qts then read qts :: Int else 0
+      gen = mkStdGen rnum
       isub = qt==1 || qt==3 || qt==5 || qt==7 || qt==9
       iverN = qt==2 || qt==3 || qt==6 || qt==7
       iverP = qt==4 || qt==5 || qt==6 || qt==7
       iverI = qt==8 || qt==9
       ioVerP = qt==0 && qts=="vp"
-      (q,a) = if ioVerP then makeVerbChange nl verbJ else makeSentence nl (isub,iverN,iverP,iverI) subJ verbJ
+      (q,a) = if ioVerP then makeVerbChange gen nl verbJ else makeSentence gen nl (isub,iverN,iverP,iverI) subJ verbJ
       hd0 = if isub then "\\scriptsize 主語ー" else ""
       hd1 = if iverN then hd0<>"\\scriptsize 動詞現在形ー" else hd0
       hd2 = if iverP then hd1<>"\\scriptsize 動詞過去形ー" else hd1
@@ -282,8 +280,8 @@ makePages arg (pq,pa) =
       hd = if ioVerP then "\n\\lhead{\\scriptsize 動詞ー現在・過去 活用練習}\n" else "\n\\lhead{"<>hd3<>"英文練習}\n"
       nq = pq <> hd <> strQToLatex ioVerP q
       na = pa <> hd <> T.unlines (listAToLatex (T.lines a))
-   in if length arg > 2 then makePages (drop 2 arg) (nq<>"\n\\newpage",na<>"\n\\newpage")
-                    else (nq,na)
+   in if length arg > 3 then makePages (drop 3 arg) (nq<>"\n\\newpage",na<>"\n\\newpage")
+                        else (nq,na)
 
 eigo :: T.Text -> T.Text 
 eigo argument = do

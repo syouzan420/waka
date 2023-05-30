@@ -18,6 +18,13 @@ instance View CodeView where
             <br>
             <label for="latex">eigotex</label>
             <br>
+            引き數の渡し方 覺へ書き<br>
+            arg=適當な數字（ランダム生成に使ふ)  問題数  種類 ..<br>
+            例:<br>
+            Code?arg=133 20 1 345 30 5<br>
+            結果:<br>
+            主語の問題20問と主語＋動詞過去形の問題が30問生成される
+            <br>
             <textarea id="latex" name="latex" rows="30" cols="100" >
             {eigo arg}
             </textarea>
