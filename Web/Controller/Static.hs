@@ -5,4 +5,4 @@ import Web.View.Static.Code
 
 instance Controller StaticController where
     action WelcomeAction = render WelcomeView
-    action CodeAction = render CodeView
+    action CodeAction {arg} = render CodeView {arg}

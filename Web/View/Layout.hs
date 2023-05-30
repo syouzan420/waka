@@ -78,6 +78,20 @@ scripts = [hsx|
         <script src={assetPath "/app.js"}></script>
     |]
 
+scriptMath :: Html
+scriptMath = [hsx|
+  <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['$', '$'] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ]
+      }
+    });
+  </script>
+  |]
+
 devScripts :: Html
 devScripts = [hsx|
         <script id="livereload-script" src={assetPath "/livereload.js"} data-ws={liveReloadWebsocketUrl}></script>

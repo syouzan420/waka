@@ -18,7 +18,7 @@ data WebApplication = WebApplication deriving (Eq, Show)
 
 data StaticController 
     = WelcomeAction
-    | CodeAction
+    | CodeAction {arg :: !Text}
     deriving (Eq, Show, Data)
 
 data PostsController

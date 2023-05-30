@@ -19,7 +19,8 @@ renderForm :: Post -> Html
 renderForm post = formFor post [hsx|
     {(textField #title)}
     {(checkboxField #tate){fieldLabel = "縦書き"}}
-    {(textareaField #body){helpText = "You can use Markdown here"}}
+    {(textareaField #body){helpText = "You can use Markdown here"
+                          ,additionalAttributes = [("rows","10")]}}
     {submitButton}
 
 |]

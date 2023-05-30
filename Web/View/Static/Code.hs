@@ -1,10 +1,12 @@
 module Web.View.Static.Code where
 import Web.View.Prelude
+import Web.View.Static.Eigo(eigo)
 
-data CodeView = CodeView
+data CodeView = CodeView {arg :: Text}
 
 instance View CodeView where
-    html CodeView = [hsx|
+    html CodeView {..}= [hsx|
+    {scriptLatex}
         <div style="background-color: #657b83; padding: 2rem; color:hsla(196, 13%, 96%, 1); border-radius: 4px">
             <p style="margin-top: 1rem; font-size: 1.75rem; font-weight: 600; color:hsla(196, 13%, 80%, 1)">
                       {showResult} 
@@ -13,6 +15,14 @@ instance View CodeView where
             {setCanvas "canvas"}
             {setDraw}
             {fillRect 100 10 20 30}
+            <br>
+            <label for="latex">eigotex</label>
+            <br>
+            <textarea id="latex" name="latex" rows="30" cols="100" >
+            {eigo arg}
+            </textarea>
+            <br>
+            <a href="https://cloudlatex.io/" target="_blank" color="cyan">CLOUDLATEX</a>
          </div> 
 |]
 
@@ -69,4 +79,12 @@ rect x y w h = [hsx|
   var h = csd.h;
 </script>
 |]
+
+scriptLatex :: Html
+scriptLatex = [hsx|
+  <meta charset="utf-8">
+  <script>window.MathJax = { MathML: { extensions: ["mml3.js", "content-mathml.js"]}};</script>
+  <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+  |]
 
