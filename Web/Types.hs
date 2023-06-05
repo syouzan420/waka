@@ -19,6 +19,7 @@ data WebApplication = WebApplication deriving (Eq, Show)
 data StaticController 
     = WelcomeAction
     | CodeAction {arg :: !Text}
+    | TimerAction
     deriving (Eq, Show, Data)
 
 data PostsController

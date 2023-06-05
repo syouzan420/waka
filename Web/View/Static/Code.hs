@@ -16,6 +16,8 @@ instance View CodeView where
             {setDraw}
             {fillRect 100 10 20 30}
             <br>
+            <a href={TimerAction}>TIMER</a>
+            <br>
             <label for="latex">eigotex</label>
             <br>
             引き數の渡し方 覺へ書き<br>
