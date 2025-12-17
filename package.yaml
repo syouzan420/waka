@@ -1,10 +1,10 @@
 name:                waka
 version:             0.1.0.0
-github:              "githubuser/waka"
+github:              "syouzan420/waka"
 license:             BSD-3-Clause
-author:              "Author name here"
-maintainer:          "example@example.com"
-copyright:           "2025 Author name here"
+author:              "yokoP"
+maintainer:          "syouzangame@yahoo.co.jp"
+copyright:           "2025 Teruhisa Yokoyama"
 
 extra-source-files:
 - README.md
@@ -17,7 +17,7 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/githubuser/waka#readme>
+description:         Please see the README on GitHub at <https://github.com/syouzan420/waka#readme>
 
 dependencies:
 - base >= 4.7 && < 5
