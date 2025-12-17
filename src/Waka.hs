@@ -18,9 +18,8 @@ import MainSF (mainSF)
 import WakaData (loadWakaData,WakaData)
 
 wakaMain :: IO ()
-wakaMain = withSDL $ do 
-    withSDLAudio $ do
-      withSDLVideo $ \renderer -> do
+wakaMain = withSDL $ withSDLAudio $ withSDLVideo $
+      \renderer -> do
         wd <- loadWakaData renderer
         withIORefInit $ \tRef -> do
           rgen <- getStdGen
