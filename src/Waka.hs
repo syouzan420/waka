@@ -12,9 +12,10 @@ import WithSDL (withSDL)
 import WithSDLAudio (withSDLAudio)
 import WithSDLVideo (withSDLVideo)
 import WithIORef (withIORefInit,getTimeDifference)
+import IOAction (ioact)
 import Inputs (initInput,readInputs,Inputs(inpQ))
 import MainSF (mainSF)
-import WakaData (loadWakaData)
+import WakaData (loadWakaData,WakaData)
 
 wakaMain :: IO ()
 wakaMain = withSDL $ do 
@@ -42,5 +43,5 @@ isQuit QuitEvent = True
 isQuit (WindowClosedEvent _) = True
 isQuit _ = False
   
-output ::  Bool -> IO () -> IO Bool
-output _ ioact = ioact >> return False
+output ::  Bool -> WakaData -> IO Bool
+output _ wd = ioact wd >> return False

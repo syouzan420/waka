@@ -1,9 +1,8 @@
-module WithSDLVideo (withSDLVideo,withRenderer,draw) where
+module WithSDLVideo (withSDLVideo,withRenderer) where
 
 import Control.Monad.IO.Class (MonadIO)
 import Foreign.C.Types (CInt,CFloat)
 import SDL (($=),V4(V4),V2(V2),cursorVisible)
-import SDL.Primitive (fillCircle)
 import SDL.Video (createWindow,defaultWindow,windowInitialSize,createRenderer
                  ,defaultRenderer,destroyWindow
                  )
@@ -13,7 +12,7 @@ import SDL.Video.Renderer (rendererScale,rendererDrawBlendMode,rendererDrawColor
                           ,BlendMode(BlendAlphaBlend)
                           ,RendererType(AcceleratedVSyncRenderer))
 
-import WakaData (windowSize,title,WakaData(wdRenderer,wdDouble))
+import WakaData (windowSize,title)
 
 screenScale :: V2 CFloat
 screenScale = V2 4 4
@@ -38,9 +37,3 @@ withRenderer renderer op = do
   _ <- op
   present renderer
 
-draw :: WakaData -> IO ()
-draw wd = do 
-  let renderer = wdRenderer wd
-  let i = wdDouble wd
-  fillCircle renderer (V2 60 (10+fromIntegral(floor i))) 10 (V4 102 178 255 255)
-  putStrLn ("Hello " ++ show i)

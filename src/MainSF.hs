@@ -6,14 +6,10 @@ import FRP.Yampa (integral,returnA,arr,SF,(^<<),(>>>),(^+^))
 import System.Random (StdGen)
 
 import Inputs (Inputs(..))
-import IOAction (ioact)
 import WakaData (WakaData(..))
 
-mainSF :: StdGen -> WakaData -> SF Inputs (IO ()) 
-mainSF rgen wd = update rgen wd >>> arr ioact 
-
-update :: StdGen -> WakaData -> SF Inputs WakaData
-update rgen wd = proc i -> do
+mainSF :: StdGen -> WakaData -> SF Inputs WakaData
+mainSF rgen wd = proc i -> do
     rec
        let nwd = wd{wdDouble=p}
 --       p <- (+(1::Double)) ^<< integral -< wdDouble nwd 

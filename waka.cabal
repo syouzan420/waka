@@ -11,7 +11,7 @@ homepage:       https://github.com/syouzan420/waka#readme
 bug-reports:    https://github.com/syouzan420/waka/issues
 author:         yokoP
 maintainer:     syouzangame@yahoo.co.jp
-copyright:      2025 Teruhisa Yokoyama 
+copyright:      2025 Teruhisa Yokoyama
 license:        BSD-3-Clause
 license-file:   LICENSE
 build-type:     Simple
@@ -28,6 +28,7 @@ library
       Inputs
       IOAction
       MainSF
+      SDLDraw
       SpriteName
       Waka
       WakaData

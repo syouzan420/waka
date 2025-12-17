@@ -1,6 +1,7 @@
 module IOAction(ioact) where
 
-import WithSDLVideo (withRenderer,draw)
+import WithSDLVideo (withRenderer)
+import SDLDraw (draw)
 import WakaData (WakaData(..))
 
 ioact :: WakaData -> IO ()
