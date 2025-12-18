@@ -5,6 +5,7 @@ import SDL (V2(V2))
 import SDL.Video.Renderer (Renderer,Texture)
 import qualified SDL.Image as I
 import qualified Data.Map as M
+import Data.Point2 (Point2(..))
 import Foreign.C.Types (CFloat)
 import Data.Maybe (fromMaybe)
 import Control.Exception (handle,SomeException)
@@ -17,6 +18,7 @@ data WakaData = WakaData {
     wdRenderer :: !Renderer
    ,wdGetSprite :: !(SpriteName -> Texture)
    ,wdDouble :: !Double
+   ,wdPlayerPos :: !(Point2 CFloat)
 }
 
 title :: Text
@@ -46,5 +48,6 @@ loadWakaData renderer = do
     wdRenderer = renderer
    ,wdGetSprite = fromMaybe defaultTexture . (`M.lookup` sprites)
    ,wdDouble = 0
+   ,wdPlayerPos = Point2 10 10
   }
 
