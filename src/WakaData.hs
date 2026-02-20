@@ -12,14 +12,21 @@ import Control.Exception (handle,SomeException)
 
 import Data.Text (Text)
 
-import SpriteName (SpriteName)
+import SpriteName (SpriteName(..))
 
 data WakaData = WakaData {
     wdRenderer :: !Renderer
    ,wdGetSprite :: !(SpriteName -> Texture)
    ,wdDouble :: !Double
    ,wdPlayerPos :: !(Point2 CFloat)
+   ,wdPlayerImg :: !ImgType
 }
+
+data ImgLR = ImL | ImR deriving (Show,Eq) 
+
+data ImgType = ImgType !ImgDir !ImgLR deriving Show
+
+data ImgDir = ImFront | ImBack | ImLeft | ImRight deriving (Show,Eq)
 
 title :: Text
 title = "わかひめ"
@@ -49,5 +56,15 @@ loadWakaData renderer = do
    ,wdGetSprite = fromMaybe defaultTexture . (`M.lookup` sprites)
    ,wdDouble = 0
    ,wdPlayerPos = Point2 10 10
+   ,wdPlayerImg = ImgType ImFront ImL
   }
 
+getSpriteName :: ImgType -> SpriteName
+getSpriteName (ImgType ImFront ImL) = PlayerFrontLeft
+getSpriteName (ImgType ImFront ImR) = PlayerFrontRight
+getSpriteName (ImgType ImBack ImL) = PlayerBackLeft
+getSpriteName (ImgType ImBack ImR) = PlayerBackRight
+getSpriteName (ImgType ImLeft ImL) = PlayerLeft
+getSpriteName (ImgType ImLeft ImR) = PlayerLeftRight
+getSpriteName (ImgType ImRight ImL) = PlayerRightLeft
+getSpriteName (ImgType ImRight ImR) = PlayerRight
