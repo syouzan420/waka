@@ -2,11 +2,12 @@
 
 module MainSF(mainSF) where
 
-import FRP.Yampa (integral,returnA,arr,sscan,SF,(^<<),(>>>),(^+^))
+import FRP.Yampa (integral,returnA,arr,sscan,delay,SF,(^<<),(>>>),(<<<),(^+^))
 import System.Random (StdGen)
 import Foreign.C.Types (CFloat)
 import Data.Vector2 (vector2,Vector2)
 import Data.AffineSpace ((.+^))
+import Data.Point2 (Point2(..))
 
 import Inputs (Inputs(..))
 import WakaData (WakaData(..),ImgType(..),ImgLR(..),ImgDir(..))
@@ -15,13 +16,22 @@ mainSF :: StdGen -> WakaData -> SF Inputs WakaData
 mainSF rgen wd = proc i -> do
     rec
        let nwd = wd{wdDouble=d,wdPlayerPos=p,wdPlayerImg=im}
-       dv <- (+(1::Double)) ^<< integral -< wdDouble wd 
-       d <- (+10) ^<< integral -< dv
-       v1 <- arr setVel -< (i,vector2 0 0)
+       dv <- (+(1::Double)) ^<< integral      -< wdDouble wd 
+       d  <- (+10)          ^<< integral      -< dv
        im <- sscan setImgDir (wdPlayerImg wd) -< i
-       v <- (vector2 0 0 ^+^) ^<< integral -< v1 
-       p <- (wdPlayerPos wd .+^) ^<< integral -< v
+       p  <- sscan setPos (wdPlayerPos wd)    -< i 
+--       v1 <- arr setVel -< (i,vector2 0 0)
+--       v <- (vector2 0 0 ^+^) ^<< integral -< v1 
+--       p <- (wdPlayerPos wd .+^) ^<< integral -< v
     returnA -< nwd 
+
+setPos :: Point2 CFloat -> Inputs -> Point2 CFloat
+setPos p i 
+  | inpUp i = p .+^ vector2 0 (-1)
+  | inpDown i = p .+^ vector2 0 1
+  | inpLeft i = p .+^ vector2 (-1) 0 
+  | inpRight i = p .+^ vector2 1 0 
+  | otherwise = p
 
 setVel :: (Inputs,Vector2 CFloat) -> Vector2 CFloat 
 setVel (i,v)
@@ -31,13 +41,15 @@ setVel (i,v)
   | inpRight i = v ^+^ vector2 10 0 
   | otherwise = v
 
-setImgDir :: ImgType -> Inputs -> ImgType
-setImgDir (ImgType dir lr) i
-  | inpUp i = ImgType ImBack (if dir==ImBack then changeLR lr else ImL)
-  | inpDown i = ImgType ImFront (if dir==ImFront then changeLR lr else ImL) 
-  | inpLeft i = ImgType ImLeft (if dir==ImLeft then changeLR lr else ImL) 
-  | inpRight i = ImgType ImRight (if dir==ImRight then changeLR lr else ImL)
-  | otherwise = ImgType dir lr
+setImgDir :: (ImgType,Int) -> Inputs -> (ImgType,Int)
+setImgDir ((ImgType dir lr),c) i
+  | inpUp i = ((ImgType ImBack (nlr ImBack)),nc)
+  | inpDown i = ((ImgType ImFront (nlr ImFront)),nc)
+  | inpLeft i = ((ImgType ImLeft (nlr ImLeft)),nc) 
+  | inpRight i = ((ImgType ImRight (nlr ImRight)),nc)
+  | otherwise = ((ImgType dir lr),nc)
+  where nc = if c==10 then 0 else c+1
+        nlr dr = if dir==dr && c==10 then changeLR lr else lr 
 
 changeLR :: ImgLR -> ImgLR
 changeLR lr = if lr==ImL then ImR else ImL 

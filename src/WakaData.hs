@@ -19,7 +19,7 @@ data WakaData = WakaData {
    ,wdGetSprite :: !(SpriteName -> Texture)
    ,wdDouble :: !Double
    ,wdPlayerPos :: !(Point2 CFloat)
-   ,wdPlayerImg :: !ImgType
+   ,wdPlayerImg :: !(ImgType,Int)
 }
 
 data ImgLR = ImL | ImR deriving (Show,Eq) 
@@ -56,7 +56,7 @@ loadWakaData renderer = do
    ,wdGetSprite = fromMaybe defaultTexture . (`M.lookup` sprites)
    ,wdDouble = 0
    ,wdPlayerPos = Point2 10 10
-   ,wdPlayerImg = ImgType ImFront ImL
+   ,wdPlayerImg = (ImgType ImFront ImL,0)
   }
 
 getSpriteName :: ImgType -> SpriteName

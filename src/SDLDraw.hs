@@ -12,7 +12,7 @@ draw :: WakaData -> IO ()
 draw wd = do 
   let renderer = wdRenderer wd
   let getSprite = wdGetSprite wd
-  let imgType = wdPlayerImg wd
+  let (imgType,_) = wdPlayerImg wd
   let plSpriteName = getSpriteName imgType
   let pli = getSprite plSpriteName 
   let i = wdDouble wd
