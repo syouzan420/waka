@@ -19,12 +19,12 @@ data WakaData = WakaData {
    ,wdGetSprite :: !(SpriteName -> Texture)
    ,wdDouble :: !Double
    ,wdPlayerPos :: !(Point2 CFloat)
-   ,wdPlayerImg :: !(ImgType,Int)
+   ,wdPlayerImg :: !ImgType
 }
 
 data ImgLR = ImL | ImR deriving (Show,Eq) 
 
-data ImgType = ImgType !ImgDir !ImgLR deriving Show
+data ImgType = ImgType !ImgDir !ImgLR !Int deriving Show
 
 data ImgDir = ImFront | ImBack | ImLeft | ImRight deriving (Show,Eq)
 
@@ -56,15 +56,15 @@ loadWakaData renderer = do
    ,wdGetSprite = fromMaybe defaultTexture . (`M.lookup` sprites)
    ,wdDouble = 0
    ,wdPlayerPos = Point2 10 10
-   ,wdPlayerImg = (ImgType ImFront ImL,0)
+   ,wdPlayerImg = ImgType ImFront ImL 0
   }
 
 getSpriteName :: ImgType -> SpriteName
-getSpriteName (ImgType ImFront ImL) = PlayerFrontLeft
-getSpriteName (ImgType ImFront ImR) = PlayerFrontRight
-getSpriteName (ImgType ImBack ImL) = PlayerBackLeft
-getSpriteName (ImgType ImBack ImR) = PlayerBackRight
-getSpriteName (ImgType ImLeft ImL) = PlayerLeft
-getSpriteName (ImgType ImLeft ImR) = PlayerLeftRight
-getSpriteName (ImgType ImRight ImL) = PlayerRightLeft
-getSpriteName (ImgType ImRight ImR) = PlayerRight
+getSpriteName (ImgType ImFront ImL _) = PlayerFrontLeft
+getSpriteName (ImgType ImFront ImR _) = PlayerFrontRight
+getSpriteName (ImgType ImBack ImL _) = PlayerBackLeft
+getSpriteName (ImgType ImBack ImR _) = PlayerBackRight
+getSpriteName (ImgType ImLeft ImL _) = PlayerLeft
+getSpriteName (ImgType ImLeft ImR _) = PlayerLeftRight
+getSpriteName (ImgType ImRight ImL _) = PlayerRightLeft
+getSpriteName (ImgType ImRight ImR _) = PlayerRight

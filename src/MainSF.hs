@@ -41,13 +41,13 @@ setVel (i,v)
   | inpRight i = v ^+^ vector2 10 0 
   | otherwise = v
 
-setImgDir :: (ImgType,Int) -> Inputs -> (ImgType,Int)
-setImgDir ((ImgType dir lr),c) i
-  | inpUp i = ((ImgType ImBack (nlr ImBack)),nc)
-  | inpDown i = ((ImgType ImFront (nlr ImFront)),nc)
-  | inpLeft i = ((ImgType ImLeft (nlr ImLeft)),nc) 
-  | inpRight i = ((ImgType ImRight (nlr ImRight)),nc)
-  | otherwise = ((ImgType dir lr),nc)
+setImgDir :: ImgType -> Inputs -> ImgType
+setImgDir (ImgType dir lr c) i
+  | inpUp i = ImgType ImBack (nlr ImBack) nc
+  | inpDown i = ImgType ImFront (nlr ImFront) nc
+  | inpLeft i = ImgType ImLeft (nlr ImLeft) nc 
+  | inpRight i = ImgType ImRight (nlr ImRight) nc
+  | otherwise = ImgType dir lr nc
   where nc = if c==10 then 0 else c+1
         nlr dr = if dir==dr && c==10 then changeLR lr else lr 
 
