@@ -21,5 +21,5 @@ draw wd = do
   let py' = fromIntegral $ floor py
   fillCircle renderer (V2 60 (10+fromIntegral(floor i))) 10 (V4 102 178 255 255)
   copy renderer pli Nothing (Just (Rectangle (P (V2 px' py')) (V2 16 16)))
-  putStrLn ("Hello " ++ show i ++" "++ show px ++ ","++show py++" "++show imgType)
+  putStrLn (show i ++" "++ show px ++ ","++show py)
 

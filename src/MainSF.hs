@@ -26,11 +26,11 @@ mainSF rgen wd = proc i -> do
     returnA -< nwd 
 
 setPos :: Point2 CFloat -> Inputs -> Point2 CFloat
-setPos p i 
-  | inpUp i = p .+^ vector2 0 (-1)
-  | inpDown i = p .+^ vector2 0 1
-  | inpLeft i = p .+^ vector2 (-1) 0 
-  | inpRight i = p .+^ vector2 1 0 
+setPos p@(Point2 x y) i 
+  | inpUp i = if y>10 then p .+^ vector2 0 (-1) else p
+  | inpDown i = if y<100 then p .+^ vector2 0 1 else p
+  | inpLeft i = if x>10 then p .+^ vector2 (-1) 0 else p
+  | inpRight i = if x<100 then p .+^ vector2 1 0 else p
   | otherwise = p
 
 setVel :: (Inputs,Vector2 CFloat) -> Vector2 CFloat 

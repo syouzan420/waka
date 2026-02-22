@@ -13,11 +13,14 @@ import Control.Exception (handle,SomeException)
 import Data.Text (Text)
 
 import SpriteName (SpriteName(..))
+import TileName (TileName)
 
 data WakaData = WakaData {
-    wdRenderer :: !Renderer
+    wdRenderer  :: !Renderer
    ,wdGetSprite :: !(SpriteName -> Texture)
-   ,wdDouble :: !Double
+   ,wdGetTile   :: !(TileName -> Texture)
+   ,wdGetKana   :: !(Char -> Texture)
+   ,wdDouble    :: !Double
    ,wdPlayerPos :: !(Point2 CFloat)
    ,wdPlayerImg :: !ImgType
 }
@@ -39,8 +42,18 @@ defaultImagePath = "resources/images/default.png"
 
 spritePaths :: [(SpriteName, String)]
 spritePaths = [(name, "resources/images/sprites/" ++ show name ++ ".png")
-               | name <- [toEnum 0 ..]
-              ]
+               | name <- [toEnum 0 ..]]
+
+tilePaths :: [(TileName, String)]
+tilePaths = [(name, "resources/images/tiles/" ++ show name ++ ".png")
+             | name <- [toEnum 0 ..]]
+
+kanaPaths :: [(Char, String)]
+kanaPaths = [(ch, "resources/images/fonts/font-" ++ show (fromEnum ch) ++ ".png")
+             | ch <- kanaString]
+
+kanaString :: String
+kanaString = "()「」あいうえおかがきぎくぐけげこごさざしじすずせぜそぞただちぢっつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもゃやゅゆょよらりるれろわゐゑをんアイウエオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモャヤュユョヨラリルレロワヰヱヲン・ー"
 
 loadWakaData :: Renderer -> IO WakaData
 loadWakaData renderer = do
@@ -51,9 +64,15 @@ loadWakaData renderer = do
 
   sprites <- mapM (handle textureFail . I.loadTexture renderer)
                                                (M.fromList spritePaths)
+  tiles <- mapM (handle textureFail . I.loadTexture renderer)
+                                               (M.fromList tilePaths)
+  kanas <- mapM (handle textureFail . I.loadTexture renderer)
+                                               (M.fromList kanaPaths)
   return WakaData {
     wdRenderer = renderer
    ,wdGetSprite = fromMaybe defaultTexture . (`M.lookup` sprites)
+   ,wdGetTile = fromMaybe defaultTexture . (`M.lookup` tiles)
+   ,wdGetKana = fromMaybe defaultTexture . (`M.lookup` kanas)
    ,wdDouble = 0
    ,wdPlayerPos = Point2 10 10
    ,wdPlayerImg = ImgType ImFront ImL 0
