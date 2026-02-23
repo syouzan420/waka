@@ -28,9 +28,9 @@ library
       Inputs
       IOAction
       MainSF
+      Make
+      Names
       SDLDraw
-      SpriteName
-      TileName
       Waka
       WakaData
       WithIORef
@@ -47,6 +47,7 @@ library
   build-depends:
       Yampa
     , base >=4.7 && <5
+    , bytestring
     , containers
     , random
     , sdl2
@@ -71,6 +72,7 @@ executable waka-exe
   build-depends:
       Yampa
     , base >=4.7 && <5
+    , bytestring
     , containers
     , random
     , sdl2
@@ -97,6 +99,7 @@ test-suite waka-test
   build-depends:
       Yampa
     , base >=4.7 && <5
+    , bytestring
     , containers
     , random
     , sdl2

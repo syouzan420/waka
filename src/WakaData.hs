@@ -5,31 +5,62 @@ import SDL (V2(V2))
 import SDL.Video.Renderer (Renderer,Texture)
 import qualified SDL.Image as I
 import qualified Data.Map as M
+import qualified Data.ByteString as B
 import Data.Point2 (Point2(..))
-import Foreign.C.Types (CFloat)
 import Data.Maybe (fromMaybe)
+import Data.Text (Text)
+import Data.Text.Encoding (decodeUtf8)
+import Data.Functor((<&>))
+import Foreign.C.Types (CFloat,CInt)
 import Control.Exception (handle,SomeException)
 
-import Data.Text (Text)
-
-import SpriteName (SpriteName(..))
-import TileName (TileName)
+import Names (SpriteName(..),TileName,SenarioName,MessageName)
 
 data WakaData = WakaData {
-    wdRenderer  :: !Renderer
-   ,wdGetSprite :: !(SpriteName -> Texture)
-   ,wdGetTile   :: !(TileName -> Texture)
-   ,wdGetKana   :: !(Char -> Texture)
-   ,wdDouble    :: !Double
-   ,wdPlayerPos :: !(Point2 CFloat)
-   ,wdPlayerImg :: !ImgType
+    wdRenderer   :: !Renderer
+   ,wdGetSenario :: !(SenarioName -> Text)
+   ,wdGetMessage :: !(MessageName -> Text)
+   ,wdGetSprite  :: !(SpriteName -> Texture)
+   ,wdGetTile    :: !(TileName -> Texture)
+   ,wdGetKana    :: !(Char -> Texture)
+   ,wdDouble     :: !Double
+   ,wdPlayerPos  :: !(Point2 CFloat)
+   ,wdPlayerImg  :: !ImgType
+   ,wdDialog     :: ![Dialog]
 }
+
+data DataType = DText | DPng deriving Eq
+
+data ImgDir = ImFront | ImBack | ImLeft | ImRight deriving (Show,Eq)
 
 data ImgLR = ImL | ImR deriving (Show,Eq) 
 
-data ImgType = ImgType !ImgDir !ImgLR !Int deriving Show
+type ImgCount = CInt
 
-data ImgDir = ImFront | ImBack | ImLeft | ImRight deriving (Show,Eq)
+data ImgType = ImgType !ImgDir !ImgLR !ImgCount deriving Show
+
+data FontType = Kana | Wosite deriving Eq
+
+data TextDir = Tate | Yoko deriving Eq
+
+data Rect = Rect !CFloat !CFloat !CFloat !CFloat deriving Eq
+
+type FontSize = CFloat
+
+type Position = Point2 CFloat
+
+data Mozi = Mozi !FontType !FontSize !Position !Char deriving Eq
+
+data Dialog = Dialog {
+  textData     :: !String
+ ,textPosition :: !CInt
+ ,textDir      :: !TextDir
+ ,isBorder     :: !Bool
+ ,dialogRect   :: !Rect
+ ,defFontSize  :: !FontSize
+ ,textCount    :: !CInt
+ ,textCountMax :: !CInt
+ } deriving Eq
 
 title :: Text
 title = "わかひめ"
@@ -37,18 +68,28 @@ title = "わかひめ"
 windowSize :: V2 CFloat
 windowSize = V2 140 160 
 
-defaultImagePath :: String
+getPaths :: (Show n,Enum n) => String -> DataType -> [(n, FilePath)]
+getPaths rpath tp = [(name, "resources/" ++ toPath tp ++ "/" ++ rpath ++ "/"
+                  ++ show name ++ toExt tp) | name <- [toEnum 0 ..]] 
+  where toPath t = case t of DText -> "text"; DPng -> "images"
+        toExt t = case t of DText -> ".txt"; DPng -> ".png"
+
+senarioPaths :: [(SenarioName, FilePath)]
+senarioPaths = getPaths "senario" DText
+
+messagePaths :: [(MessageName, FilePath)]
+messagePaths = getPaths "message" DText
+
+defaultImagePath :: FilePath 
 defaultImagePath = "resources/images/default.png"
 
-spritePaths :: [(SpriteName, String)]
-spritePaths = [(name, "resources/images/sprites/" ++ show name ++ ".png")
-               | name <- [toEnum 0 ..]]
+spritePaths :: [(SpriteName, FilePath)]
+spritePaths = getPaths "sprites" DPng
 
-tilePaths :: [(TileName, String)]
-tilePaths = [(name, "resources/images/tiles/" ++ show name ++ ".png")
-             | name <- [toEnum 0 ..]]
+tilePaths :: [(TileName, FilePath)]
+tilePaths = getPaths "tiles" DPng
 
-kanaPaths :: [(Char, String)]
+kanaPaths :: [(Char, FilePath)]
 kanaPaths = [(ch, "resources/images/fonts/font-" ++ show (fromEnum ch) ++ ".png")
              | ch <- kanaString]
 
@@ -57,6 +98,14 @@ kanaString = "()「」あいうえおかがきぎくぐけげこごさざしじ�
 
 loadWakaData :: Renderer -> IO WakaData
 loadWakaData renderer = do
+  let defaultText = "こんにちは"
+  let textFail :: SomeException -> IO Text
+      textFail e = return defaultText
+
+  senario <- mapM (handle textFail . loadText) (M.fromList senarioPaths)
+
+  message <- mapM (handle textFail . loadText) (M.fromList messagePaths)
+
   defaultTexture <- I.loadTexture renderer defaultImagePath
   
   let textureFail :: SomeException -> IO Texture
@@ -70,13 +119,19 @@ loadWakaData renderer = do
                                                (M.fromList kanaPaths)
   return WakaData {
     wdRenderer = renderer
+   ,wdGetSenario = fromMaybe defaultText . (`M.lookup` senario)
+   ,wdGetMessage = fromMaybe defaultText . (`M.lookup` message)
    ,wdGetSprite = fromMaybe defaultTexture . (`M.lookup` sprites)
    ,wdGetTile = fromMaybe defaultTexture . (`M.lookup` tiles)
    ,wdGetKana = fromMaybe defaultTexture . (`M.lookup` kanas)
    ,wdDouble = 0
    ,wdPlayerPos = Point2 10 10
    ,wdPlayerImg = ImgType ImFront ImL 0
+   ,wdDialog = []
   }
+
+loadText :: FilePath -> IO Text
+loadText fileName = B.readFile fileName <&> decodeUtf8
 
 getSpriteName :: ImgType -> SpriteName
 getSpriteName (ImgType ImFront ImL _) = PlayerFrontLeft

@@ -33,14 +33,6 @@ setPos p@(Point2 x y) i
   | inpRight i = if x<100 then p .+^ vector2 1 0 else p
   | otherwise = p
 
-setVel :: (Inputs,Vector2 CFloat) -> Vector2 CFloat 
-setVel (i,v)
-  | inpUp i = v ^+^ vector2 0 (-10)
-  | inpDown i = v ^+^ vector2 0 10
-  | inpLeft i = v ^+^ vector2 (-10) 0 
-  | inpRight i = v ^+^ vector2 10 0 
-  | otherwise = v
-
 setImgDir :: ImgType -> Inputs -> ImgType
 setImgDir (ImgType dir lr c) i
   | inpUp i = ImgType ImBack (nlr ImBack) nc

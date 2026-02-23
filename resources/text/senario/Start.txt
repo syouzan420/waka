@@ -1,0 +1,9 @@
+start:
+\setDialog tate noBorder 
+これはテストです
+とちゅうでとめて。さいかいできるやうにしたいです
+ルビは るび：るび：のやうにします
+\newLine
+ゲームしんかうは すべて ここからできるやうにします
+\getMessage yoko greeting
+よこの メッセージが ひょうじできれば せいかうです
