@@ -24,10 +24,17 @@ data WakaData = WakaData {
    ,wdGetTile    :: !(TileName -> Texture)
    ,wdGetKana    :: !(Char -> Texture)
    ,wdDouble     :: !Double
-   ,wdPlayerPos  :: !(Point2 CFloat)
-   ,wdPlayerImg  :: !ImgType
+   ,wdInputMode  :: !InputMode
+   ,wdFieldData  :: !FieldData
    ,wdDialog     :: ![Dialog]
 }
+
+data FieldData = FieldData {
+    fdPlayerPos :: !(Point2 CFloat)
+   ,fdPlayerImg :: !ImgType
+}
+
+data InputMode = IField | IDialog | IZyutu deriving (Show,Eq)
 
 data DataType = DText | DPng deriving Eq
 
@@ -125,8 +132,8 @@ loadWakaData renderer = do
    ,wdGetTile = fromMaybe defaultTexture . (`M.lookup` tiles)
    ,wdGetKana = fromMaybe defaultTexture . (`M.lookup` kanas)
    ,wdDouble = 0
-   ,wdPlayerPos = Point2 10 10
-   ,wdPlayerImg = ImgType ImFront ImL 0
+   ,wdInputMode = IField
+   ,wdFieldData = FieldData (Point2 10 10) (ImgType ImFront ImL 0)
    ,wdDialog = []
   }
 
