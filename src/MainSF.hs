@@ -11,18 +11,40 @@ import Data.Point2 (Point2(..))
 
 import Inputs (Inputs(..))
 import WakaData (WakaData(..),ImgType(..),ImgLR(..),ImgDir(..),FieldData(..)
-                ,InputMode(..))
+                ,InputMode(..),Dialog(..))
 
 mainSF :: StdGen -> WakaData -> SF Inputs WakaData
 mainSF rgen wd = proc i -> do
     rec
-       let nwd = wd{wdDouble=d,wdFieldData=fd}
+       let nwd = wd{wdDouble=d,wdFieldData=fd,wdDialog=dl}
        dv <- (+(1::Double)) ^<< integral -< wdDouble wd 
        d  <- (+10)          ^<< integral -< dv
-       fd  <- sscan playerMove fdWd      -< (i,inm) 
+       fd <- sscan playerMove fdWd       -< (i,inm) 
+       dl <- sscan messageControl dlWd   -< (i,inm)
     returnA -< nwd 
     where fdWd = wdFieldData wd
           inm = wdInputMode wd
+          dlWd = wdDialog wd
+
+messageControl :: [Dialog] -> (Inputs,InputMode) -> [Dialog]
+messageControl [] _ = []
+messageControl dl@(d:ds) (i,IDialog) 
+  | inpA i = if isstop then d{isStop=False}:ds else dl
+  | otherwise = messagesUpdate dl
+  where isstop = isStop d
+messageControl dl _ = messagesUpdate dl
+
+messagesUpdate :: [Dialog] -> [Dialog]
+messagesUpdate = map messageUpdate  
+
+messageUpdate :: Dialog -> Dialog
+messageUpdate d = let isstop = isStop d; isend = isEnd d
+                      tp = textPosition d
+                      tc = textCount d; tcmax = textCountMax d
+                   in if isstop || isend then d else 
+                          let ntp = if tc==tcmax then tp+1 else tp
+                              ntc = if tc==tcmax then 0 else tc+1
+                           in d{textPosition=ntp,textCount=ntc}
 
 playerMove :: FieldData -> (Inputs,InputMode) -> FieldData
 playerMove fd@(FieldData p im) (i,IField) = 

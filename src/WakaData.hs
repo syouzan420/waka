@@ -67,6 +67,8 @@ data Dialog = Dialog {
  ,defFontSize  :: !FontSize
  ,textCount    :: !CInt
  ,textCountMax :: !CInt
+ ,isStop       :: !Bool
+ ,isEnd        :: !Bool
  } deriving Eq
 
 title :: Text
