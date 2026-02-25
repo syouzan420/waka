@@ -27,6 +27,7 @@ data WakaData = WakaData {
    ,wdInputMode  :: !InputMode
    ,wdFieldData  :: !FieldData
    ,wdDialog     :: ![Dialog]
+   ,wdDialogBox  :: ![DialogBox]
 }
 
 data FieldData = FieldData {
@@ -59,17 +60,34 @@ type Position = Point2 CFloat
 data Mozi = Mozi !FontType !FontSize !Position !Char deriving Eq
 
 data Dialog = Dialog {
-  textData     :: !String
+  textData     :: ![Mozi]
  ,textPosition :: !CInt
- ,textDir      :: !TextDir
- ,isBorder     :: !Bool
- ,dialogRect   :: !Rect
- ,defFontSize  :: !FontSize
  ,textCount    :: !CInt
  ,textCountMax :: !CInt
  ,isStop       :: !Bool
  ,isEnd        :: !Bool
  } deriving Eq
+
+data DialogBox = DialogBox {
+  textDir      :: !TextDir
+ ,isBorder     :: !Bool
+ ,dialogRect   :: !Rect
+ ,fontType     :: !FontType
+ ,fontSize     :: !FontSize
+ ,textFeed     :: !CInt
+ ,lineFeed     :: !CInt
+} deriving Eq
+
+defaultDialogBox :: DialogBox
+defaultDialogBox = DialogBox {
+  textDir = Tate
+ ,isBorder = False
+ ,dialogRect = Rect 0 0 100 100
+ ,fontType = Kana
+ ,fontSize = 20
+ ,textFeed = 22
+ ,lineFeed = 30
+}
 
 title :: Text
 title = "わかひめ"
@@ -137,6 +155,7 @@ loadWakaData renderer = do
    ,wdInputMode = IField
    ,wdFieldData = FieldData (Point2 10 10) (ImgType ImFront ImL 0)
    ,wdDialog = []
+   ,wdDialogBox = []
   }
 
 loadText :: FilePath -> IO Text
