@@ -74,8 +74,8 @@ data DialogBox = DialogBox {
  ,dialogRect   :: !Rect
  ,fontType     :: !FontType
  ,fontSize     :: !FontSize
- ,textFeed     :: !CInt
- ,lineFeed     :: !CInt
+ ,textFeed     :: !CFloat
+ ,lineFeed     :: !CFloat
 } deriving Eq
 
 defaultDialogBox :: DialogBox
