@@ -26,6 +26,7 @@ source-repository head
 library
   exposed-modules:
       CharaControl
+      EventControl
       Inputs
       IOAction
       MainSF

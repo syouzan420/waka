@@ -14,7 +14,8 @@ import Data.Functor((<&>))
 import Foreign.C.Types (CFloat,CInt)
 import Control.Exception (handle,SomeException)
 
-import Names (SpriteName(..),TileName,StageName(..),SenarioName(..),MessageName)
+import Names (SpriteName(..),TileName,StageName(..),SenarioName(..)
+             ,MessageName,SectionName)
 
 data WakaData = WakaData {
     wdRenderer   :: !Renderer
@@ -32,8 +33,9 @@ data WakaData = WakaData {
    ,wdDialogBox  :: ![DialogBox]
 }
 
-type SectionName = String
 type Fire = Bool
+
+type Senario = Text
 
 data Progress = Progress !Fire !StageName !SenarioName !SectionName
                                                        deriving (Show,Eq)
@@ -41,13 +43,13 @@ data Progress = Progress !Fire !StageName !SenarioName !SectionName
 data SeneData = SeneData {
     senarioName :: !SenarioName
    ,sectionName :: !SectionName
-   ,senario     :: !Text
-}
+   ,senario     :: !Senario
+} deriving (Show,Eq)
 
 data FieldData = FieldData {
     fdPlayerPos :: !(Point2 CFloat)
    ,fdPlayerImg :: !ImgType
-}
+} deriving (Show,Eq)
 
 data InputMode = IField | IDialog | IZyutu deriving (Show,Eq)
 
@@ -59,7 +61,7 @@ data ImgLR = ImL | ImR deriving (Show,Eq)
 
 type ImgCount = CInt
 
-data ImgType = ImgType !ImgDir !ImgLR !ImgCount deriving Show
+data ImgType = ImgType !ImgDir !ImgLR !ImgCount deriving (Show,Eq)
 
 data FontType = Kana | Wosite deriving Eq
 
@@ -111,7 +113,7 @@ windowSize = V2 140 160
 
 getPaths :: (Show n,Enum n) => String -> DataType -> [(n, FilePath)]
 getPaths rpath tp = [(name, "resources/" ++ toPath tp ++ "/" ++ rpath ++ "/"
-                  ++ show name ++ toExt tp) | name <- [toEnum 0 ..]] 
+                  ++ show name ++ toExt tp) | name <- [toEnum 1 ..]] 
   where toPath t = case t of DText -> "text"; DPng -> "images"
         toExt t = case t of DText -> ".txt"; DPng -> ".png"
 
@@ -169,7 +171,7 @@ loadWakaData renderer = do
    ,wdDouble = 0
    ,wdInputMode = IField
    ,wdFieldData = FieldData (Point2 10 10) (ImgType ImFront ImL 0)
-   ,wdSeneData = SeneData Start "start" ""
+   ,wdSeneData = SeneData NoSene "" ""
    ,wdDialog = []
    ,wdDialogBox = []
   }

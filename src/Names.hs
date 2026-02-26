@@ -1,6 +1,11 @@
 module Names where
 
-data SpriteName = PlayerFrontLeft
+import Data.Text (Text)
+
+type SectionName = Text 
+
+data SpriteName = NoSprite 
+                | PlayerFrontLeft
                 | PlayerFrontRight
                 | PlayerBackLeft
                 | PlayerBackRight
@@ -10,7 +15,8 @@ data SpriteName = PlayerFrontLeft
                 | PlayerRight
          deriving (Enum,Eq,Ord,Read,Show)
 
-data TileName = Brick
+data TileName = NoTile
+              | Brick
               | Desert
               | Forest
               | Mountain
@@ -20,7 +26,8 @@ data TileName = Brick
               | Wood
       deriving (Enum, Eq, Ord, Read, Show)
 
-data StageName = Title
+data StageName = NoStage 
+               | Title
                | Opening
                | Field
                | Battle
@@ -28,10 +35,12 @@ data StageName = Title
                | Ending
       deriving (Eq,Show)
 
-data SenarioName = Start
+data SenarioName = NoSene 
+                 | Start
                  | End
       deriving (Enum, Eq, Ord, Read, Show)
 
-data MessageName = Yoko
+data MessageName = NoMessage 
+                 | Yoko
                  | Wakahime
   deriving (Enum, Eq, Ord, Read, Show)

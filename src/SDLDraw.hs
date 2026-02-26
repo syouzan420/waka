@@ -16,8 +16,9 @@ draw wd = do
   let plSpriteName = getSpriteName imgType
   let pli = getSprite plSpriteName 
   let i = wdDouble wd
+  let sd = wdSeneData wd
   fillCircle renderer (V2 60 (10+floor i)) 10 (V4 102 178 255 255)
   copy renderer pli 
         Nothing (Just (Rectangle (P (V2 (floor px) (floor py))) (V2 16 16)))
-  putStrLn (show i ++" "++ show px ++ "," ++ show py)
+  putStrLn (show i ++" "++ show px ++ "," ++ show py ++ " " ++ show sd)
 
