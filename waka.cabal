@@ -25,10 +25,12 @@ source-repository head
 
 library
   exposed-modules:
+      CharaControl
       Inputs
       IOAction
       MainSF
-      Make
+      MakeMoziData
+      MessageControl
       Names
       SDLDraw
       Waka

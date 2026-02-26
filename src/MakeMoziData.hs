@@ -1,4 +1,4 @@
-module Make where
+module MakeMoziData (makeMoziData) where
 
 import Data.Point2 (Point2(..))
 import Data.Vector2 (vector2)

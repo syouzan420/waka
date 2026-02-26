@@ -14,7 +14,7 @@ import Data.Functor((<&>))
 import Foreign.C.Types (CFloat,CInt)
 import Control.Exception (handle,SomeException)
 
-import Names (SpriteName(..),TileName,SenarioName,MessageName)
+import Names (SpriteName(..),TileName,StageName(..),SenarioName(..),MessageName)
 
 data WakaData = WakaData {
     wdRenderer   :: !Renderer
@@ -23,11 +23,25 @@ data WakaData = WakaData {
    ,wdGetSprite  :: !(SpriteName -> Texture)
    ,wdGetTile    :: !(TileName -> Texture)
    ,wdGetKana    :: !(Char -> Texture)
+   ,wdProgress   :: !Progress
    ,wdDouble     :: !Double
    ,wdInputMode  :: !InputMode
    ,wdFieldData  :: !FieldData
+   ,wdSeneData   :: !SeneData
    ,wdDialog     :: ![Dialog]
    ,wdDialogBox  :: ![DialogBox]
+}
+
+type SectionName = String
+type Fire = Bool
+
+data Progress = Progress !Fire !StageName !SenarioName !SectionName
+                                                       deriving (Show,Eq)
+
+data SeneData = SeneData {
+    senarioName :: !SenarioName
+   ,sectionName :: !SectionName
+   ,senario     :: !Text
 }
 
 data FieldData = FieldData {
@@ -151,9 +165,11 @@ loadWakaData renderer = do
    ,wdGetSprite = fromMaybe defaultTexture . (`M.lookup` sprites)
    ,wdGetTile = fromMaybe defaultTexture . (`M.lookup` tiles)
    ,wdGetKana = fromMaybe defaultTexture . (`M.lookup` kanas)
+   ,wdProgress = Progress True Opening Start "start"
    ,wdDouble = 0
    ,wdInputMode = IField
    ,wdFieldData = FieldData (Point2 10 10) (ImgType ImFront ImL 0)
+   ,wdSeneData = SeneData Start "start" ""
    ,wdDialog = []
    ,wdDialogBox = []
   }

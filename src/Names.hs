@@ -20,6 +20,14 @@ data TileName = Brick
               | Wood
       deriving (Enum, Eq, Ord, Read, Show)
 
+data StageName = Title
+               | Opening
+               | Field
+               | Battle
+               | Message
+               | Ending
+      deriving (Eq,Show)
+
 data SenarioName = Start
                  | End
       deriving (Enum, Eq, Ord, Read, Show)
