@@ -8,18 +8,18 @@ import WakaData (DialogBox(..),Mozi(..),Rect(..),TextDir(..),Position)
 data TxMode = Normal | Rubi | Func deriving Eq 
 type TempPos = Position -- temporal position for rubi (Previous normal position)
 
-makeMoziData :: DialogBox -> String -> [Mozi]
-makeMoziData = makeMoziData' Normal (Point2 0 0) (Point2 0 0) 
+makeMoziData :: DialogBox -> Position -> String -> [Mozi]
+makeMoziData = makeMoziData' Normal (Point2 0 0) 
 
-makeMoziData' :: TxMode -> TempPos -> Position
-                               -> DialogBox -> String -> [Mozi]
+makeMoziData' :: TxMode -> TempPos 
+                        -> DialogBox -> Position -> String -> [Mozi]
 makeMoziData' _ _ _ _ [] = []
-makeMoziData' txMode tmpPos pos db (ch:xs) =
+makeMoziData' txMode tmpPos db pos (ch:xs) =
   case txMode of 
-        Normal -> if nTxMode/=Normal then next tmpPos pos db
+        Normal -> if nTxMode/=Normal then next tmpPos db pos
                                      else let (nPos,mz) = makeMozi ch Normal pos db
-                                           in mz:next tmpPos nPos db
-        _other -> next tmpPos pos db 
+                                           in mz:next tmpPos db nPos
+        _other -> next tmpPos db pos 
   where 
     nTxMode = case ch of
         '：' -> case txMode of 
@@ -27,7 +27,7 @@ makeMoziData' txMode tmpPos pos db (ch:xs) =
         '_'  -> case txMode of
                   Normal -> Func; Func -> Normal; _other -> txMode
         _other -> txMode 
-    next ntp nps ndb = makeMoziData' nTxMode ntp nps ndb xs
+    next ntp ndb nps = makeMoziData' nTxMode ntp ndb nps xs
 
 makeMozi :: Char -> TxMode -> Position -> DialogBox -> (Position,Mozi)
 makeMozi ch txMode p@(Point2 px py) db =

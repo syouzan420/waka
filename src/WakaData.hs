@@ -37,12 +37,12 @@ type Fire = Bool
 
 type Senario = Text
 
-data Progress = Progress !Fire !StageName !SenarioName !SectionName
-                                                       deriving (Show,Eq)
+type Sene = (SenarioName,SectionName)
+
+data Progress = Progress !Fire !StageName ![Sene] deriving (Show,Eq)
 
 data SeneData = SeneData {
-    senarioName :: !SenarioName
-   ,sectionName :: !SectionName
+    sene        :: !Sene
    ,senario     :: !Senario
 } deriving (Show,Eq)
 
@@ -83,6 +83,16 @@ data Dialog = Dialog {
  ,isStop       :: !Bool
  ,isEnd        :: !Bool
  } deriving Eq
+
+defaultDialog :: Dialog
+defaultDialog = Dialog {
+  textData     = []
+ ,textPosition = 0
+ ,textCount    = 0
+ ,textCountMax = 5
+ ,isStop       = False
+ ,isEnd        = False
+}
 
 data DialogBox = DialogBox {
   textDir      :: !TextDir
@@ -167,11 +177,11 @@ loadWakaData renderer = do
    ,wdGetSprite = fromMaybe defaultTexture . (`M.lookup` sprites)
    ,wdGetTile = fromMaybe defaultTexture . (`M.lookup` tiles)
    ,wdGetKana = fromMaybe defaultTexture . (`M.lookup` kanas)
-   ,wdProgress = Progress True Opening Start "start"
+   ,wdProgress = Progress True Opening [(Start,"start")]
    ,wdDouble = 0
    ,wdInputMode = IField
    ,wdFieldData = FieldData (Point2 10 10) (ImgType ImFront ImL 0)
-   ,wdSeneData = SeneData NoSene "" ""
+   ,wdSeneData = SeneData (NoSene,"") "" 
    ,wdDialog = []
    ,wdDialogBox = []
   }
