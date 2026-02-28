@@ -180,14 +180,9 @@ loadWakaData renderer = do
    ,wdProgress = Progress True Opening [(Start,"start")]
    ,wdDouble = 0
    ,wdInputMode = IField
-   ,wdFieldData = FieldData {
-                    fdPlayerPos=Point2 10 10
-                   ,fdPlayerImg= (ImgType Player ImFront ImL,0)
-                  }
-   ,wdSeneData = SeneData {
-                    sene =(NoSene,"")
-                   ,senario="" 
-                 }
+   ,wdFieldData = FieldData {fdPlayerPos=Point2 10 10
+                            ,fdPlayerImg= (ImgType Player ImFront ImL,0)}
+   ,wdSeneData = SeneData {sene =(NoSene,"") ,senario=""}
    ,wdDialog = []
    ,wdDialogBox = []
   }
