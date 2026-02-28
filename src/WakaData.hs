@@ -153,16 +153,16 @@ loadWakaData :: Renderer -> IO WakaData
 loadWakaData renderer = do
   let defaultText = "こんにちは"
   let textFail :: SomeException -> IO Text
-      textFail e = return defaultText
+      textFail _ = return defaultText
 
-  senario <- mapM (handle textFail . loadText) (M.fromList senarioPaths)
+  senarios <- mapM (handle textFail . loadText) (M.fromList senarioPaths)
 
-  message <- mapM (handle textFail . loadText) (M.fromList messagePaths)
+  messages <- mapM (handle textFail . loadText) (M.fromList messagePaths)
 
   defaultTexture <- I.loadTexture renderer defaultImagePath
   
   let textureFail :: SomeException -> IO Texture
-      textureFail e = return defaultTexture
+      textureFail _ = return defaultTexture
 
   sprites <- mapM (handle textureFail . I.loadTexture renderer)
                                                (M.fromList spritePaths)
@@ -172,8 +172,8 @@ loadWakaData renderer = do
                                                (M.fromList kanaPaths)
   return WakaData {
     wdRenderer = renderer
-   ,wdGetSenario = fromMaybe defaultText . (`M.lookup` senario)
-   ,wdGetMessage = fromMaybe defaultText . (`M.lookup` message)
+   ,wdGetSenario = fromMaybe defaultText . (`M.lookup` senarios)
+   ,wdGetMessage = fromMaybe defaultText . (`M.lookup` messages)
    ,wdGetSprite = fromMaybe defaultTexture . (`M.lookup` sprites)
    ,wdGetTile = fromMaybe defaultTexture . (`M.lookup` tiles)
    ,wdGetKana = fromMaybe defaultTexture . (`M.lookup` kanas)
