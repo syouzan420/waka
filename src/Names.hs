@@ -4,6 +4,12 @@ import Data.Text (Text)
 
 type SectionName = Text 
 
+data CharaName = NoChara 
+               | Player
+               | Player2
+               | Person
+         deriving (Enum,Eq,Ord,Read,Show)
+
 data SpriteName = NoSprite 
                 | PlayerFrontLeft
                 | PlayerFrontRight

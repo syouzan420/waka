@@ -1,6 +1,6 @@
 module CharaControl(playerMove) where
 
-import Foreign.C.Types (CFloat)
+import Foreign.C.Types (CFloat,CInt)
 import Data.Vector2 (vector2)
 import Data.AffineSpace ((.+^))
 import Data.Point2 (Point2(..))
@@ -22,13 +22,13 @@ setPos p@(Point2 x y) i
   | inpRight i = if x<100 then p .+^ vector2 1 0 else p
   | otherwise = p
 
-setImgDir :: ImgType -> Inputs -> ImgType
-setImgDir (ImgType dir lr c) i
-  | inpUp i = ImgType ImBack (nlr ImBack) nc
-  | inpDown i = ImgType ImFront (nlr ImFront) nc
-  | inpLeft i = ImgType ImLeft (nlr ImLeft) nc 
-  | inpRight i = ImgType ImRight (nlr ImRight) nc
-  | otherwise = ImgType dir lr nc
+setImgDir :: (ImgType,CInt) -> Inputs -> (ImgType,CInt)
+setImgDir (ImgType chara dir lr,c) i
+  | inpUp i = (ImgType chara ImBack (nlr ImBack), nc)
+  | inpDown i = (ImgType chara ImFront (nlr ImFront), nc)
+  | inpLeft i = (ImgType chara ImLeft (nlr ImLeft), nc) 
+  | inpRight i = (ImgType chara ImRight (nlr ImRight), nc)
+  | otherwise = (ImgType chara dir lr, nc)
   where nc = if c==10 then 0 else c+1
         nlr dr = if dir==dr && c==10 then changeLR lr else lr 
 

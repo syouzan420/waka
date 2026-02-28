@@ -27,6 +27,7 @@ library
   exposed-modules:
       CharaControl
       EventControl
+      GetNames
       Inputs
       IOAction
       MainSF

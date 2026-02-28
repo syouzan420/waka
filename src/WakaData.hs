@@ -14,7 +14,7 @@ import Data.Functor((<&>))
 import Foreign.C.Types (CFloat,CInt)
 import Control.Exception (handle,SomeException)
 
-import Names (SpriteName(..),TileName,StageName(..),SenarioName(..)
+import Names (CharaName(..),SpriteName(..),TileName,StageName(..),SenarioName(..)
              ,MessageName,SectionName)
 
 data WakaData = WakaData {
@@ -48,20 +48,20 @@ data SeneData = SeneData {
 
 data FieldData = FieldData {
     fdPlayerPos :: !(Point2 CFloat)
-   ,fdPlayerImg :: !ImgType
+   ,fdPlayerImg :: !(ImgType,ImgCount)
 } deriving (Show,Eq)
 
 data InputMode = IField | IDialog | IZyutu deriving (Show,Eq)
 
 data DataType = DText | DPng deriving Eq
 
-data ImgDir = ImFront | ImBack | ImLeft | ImRight deriving (Show,Eq)
+data ImgDir = ImFront | ImBack | ImLeft | ImRight deriving (Show,Eq,Enum,Ord)
 
-data ImgLR = ImL | ImR deriving (Show,Eq) 
+data ImgLR = ImL | ImR deriving (Show,Eq,Enum,Ord) 
 
 type ImgCount = CInt
 
-data ImgType = ImgType !ImgDir !ImgLR !ImgCount deriving (Show,Eq)
+data ImgType = ImgType !CharaName !ImgDir !ImgLR deriving (Show,Eq)
 
 data FontType = Kana | Wosite deriving Eq
 
@@ -180,8 +180,14 @@ loadWakaData renderer = do
    ,wdProgress = Progress True Opening [(Start,"start")]
    ,wdDouble = 0
    ,wdInputMode = IField
-   ,wdFieldData = FieldData (Point2 10 10) (ImgType ImFront ImL 0)
-   ,wdSeneData = SeneData (NoSene,"") "" 
+   ,wdFieldData = FieldData {
+                    fdPlayerPos=Point2 10 10
+                   ,fdPlayerImg= (ImgType Player ImFront ImL,0)
+                  }
+   ,wdSeneData = SeneData {
+                    sene =(NoSene,"")
+                   ,senario="" 
+                 }
    ,wdDialog = []
    ,wdDialogBox = []
   }
@@ -189,12 +195,3 @@ loadWakaData renderer = do
 loadText :: FilePath -> IO Text
 loadText fileName = B.readFile fileName <&> decodeUtf8
 
-getSpriteName :: ImgType -> SpriteName
-getSpriteName (ImgType ImFront ImL _) = PlayerFrontLeft
-getSpriteName (ImgType ImFront ImR _) = PlayerFrontRight
-getSpriteName (ImgType ImBack ImL _) = PlayerBackLeft
-getSpriteName (ImgType ImBack ImR _) = PlayerBackRight
-getSpriteName (ImgType ImLeft ImL _) = PlayerLeft
-getSpriteName (ImgType ImLeft ImR _) = PlayerLeftRight
-getSpriteName (ImgType ImRight ImL _) = PlayerRightLeft
-getSpriteName (ImgType ImRight ImR _) = PlayerRight

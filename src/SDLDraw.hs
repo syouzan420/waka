@@ -4,7 +4,8 @@ import SDL (V4(V4),V2(V2),Point(P))
 import SDL.Primitive (fillCircle)
 import SDL.Video.Renderer (copy,Rectangle(..))
 import Data.Point2(Point2(..))
-import WakaData (getSpriteName,WakaData(..),FieldData(..))
+import GetNames (getSpriteName)
+import WakaData (WakaData(..),FieldData(..))
 
 draw :: WakaData -> IO ()
 draw wd = do 
@@ -12,7 +13,7 @@ draw wd = do
   let getSprite = wdGetSprite wd
   let fd = wdFieldData wd
   let (Point2 px py) = fdPlayerPos fd
-  let imgType = fdPlayerImg fd
+  let (imgType,_) = fdPlayerImg fd
   let plSpriteName = getSpriteName imgType
   let pli = getSprite plSpriteName 
   let i = wdDouble wd
